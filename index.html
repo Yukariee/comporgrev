@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COA Reviewer: Logic Gates, Boolean Algebra and K-Maps</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--ink:#16202e;--muted:#52627a;--line:#d5dde8;--accent:#2457c5;--accent-ink:#fff;--hi:#0a7d4f;--lo:#6b778a;--ok:#0a7d4f;--okbg:#e3f6ec;--bad:#b3261e;--badbg:#fdeceb;--warnbg:#fff6df;--tipbg:#e8f0fe;--sel:#c2410c;
+--g0:#dbeafe;--g1:#fde68a;--g2:#d1fae5;--g3:#fbcfe8;--g4:#e9d5ff;--g5:#fed7aa;--shadow:0 1px 3px rgba(20,30,50,.08)}
+:root[data-theme=dark]{--bg:#0f1622;--card:#17202f;--ink:#e8eef8;--muted:#a3b2c8;--line:#2c3a50;--accent:#7aa7ff;--accent-ink:#0b1220;--hi:#4ade9b;--lo:#8d9bb0;--ok:#4ade9b;--okbg:#10392b;--bad:#ff8a80;--badbg:#431a18;--warnbg:#3a3114;--tipbg:#172a4a;--sel:#fb923c;
+--g0:#1e3a6e;--g1:#6b5410;--g2:#145a40;--g3:#6b1f4d;--g4:#4a2a7a;--g5:#6b3a10;--shadow:none}
+*{box-sizing:border-box}html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+header.top{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.bar{max-width:1100px;margin:0 auto;padding:.6rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between}
+.bar h1{font-size:1.1rem;margin:0}
+nav.tabs{display:flex;flex-wrap:wrap;gap:.35rem}
+button,select,input{font:inherit;color:inherit}
+.btn{background:var(--card);border:1.5px solid var(--line);border-radius:.6rem;padding:.45rem .85rem;cursor:pointer;min-height:2.5rem}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn.small{padding:.2rem .6rem;min-height:2rem;font-size:.9rem}
+.btn[aria-current=page],.btn[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+main{max-width:1100px;margin:0 auto;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.1rem;box-shadow:var(--shadow);margin-bottom:1rem}
+h2{margin:.2rem 0 .6rem;font-size:1.4rem}h3{margin:.8rem 0 .4rem}h4{margin:1.1rem 0 .4rem}
+.muted{color:var(--muted)}
+details.how{background:var(--tipbg);border-radius:.7rem;padding:.6rem .9rem;margin-bottom:1rem}
+details.how summary{cursor:pointer;font-weight:600}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:1rem}
+@media(max-width:760px){.layout{grid-template-columns:1fr}html{font-size:16px}}
+.side{display:flex;flex-direction:column;gap:.35rem}
+@media(max-width:760px){.side{flex-direction:row;flex-wrap:wrap}}
+.side .btn{text-align:left}
+.callout{border-radius:.6rem;padding:.6rem .9rem;margin:.8rem 0;border-left:5px solid var(--accent)}
+.callout.warn{background:var(--warnbg);border-color:#d99a00}.callout.tip{background:var(--tipbg)}
+.callout p{margin:.3rem 0}.callout ul{margin:.3rem 0}
+.tablewrap{overflow-x:auto;margin:.6rem 0}
+table.data,table.rowh,table.tt{border-collapse:collapse;min-width:60%}
+table.data th,table.data td,table.rowh th,table.rowh td,table.tt th,table.tt td{border:1px solid var(--line);padding:.35rem .7rem;text-align:center}
+table.data thead th,table.rowh thead th,table.tt thead th{background:var(--tipbg)}
+table.rowh tbody th{background:var(--tipbg)}
+tr.cur td,tr.cur th{background:var(--okbg);font-weight:700;outline:2px solid var(--hi);outline-offset:-2px}
+code{background:var(--tipbg);padding:.05rem .35rem;border-radius:.3rem}
+ul.tight li{margin:.25rem 0}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+input[type=search],input[type=text],input[type=number],select{border:1.5px solid var(--line);border-radius:.5rem;padding:.4rem .6rem;background:var(--card);min-height:2.5rem}
+/* gates */
+svg.logic{width:100%;max-width:520px;height:auto;background:var(--card)}
+svg .wire{stroke-width:3;fill:none;stroke-linecap:round}
+svg .hi{stroke:var(--hi)}svg .lo{stroke:var(--lo);stroke-dasharray:6 4}svg .unk{stroke:var(--line);stroke-dasharray:2 6}
+svg .gbody{fill:var(--card);stroke:var(--ink);stroke-width:2.5}svg .gline{fill:none;stroke:var(--ink);stroke-width:2.5}
+svg text{fill:var(--ink);font-size:11px;font-weight:600}
+.led{display:inline-flex;align-items:center;gap:.5rem;font-weight:700;padding:.3rem .8rem;border-radius:2rem;border:2px solid var(--lo)}
+.led i{width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid var(--ink);display:inline-block}
+.led.on{border-color:var(--hi);background:var(--okbg)}.led.on i{background:var(--hi)}
+.expr{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.1rem;background:var(--tipbg);padding:.3rem .7rem;border-radius:.5rem;display:inline-block}
+/* kmap */
+table.kmap{border-collapse:separate;border-spacing:4px;margin:.5rem 0}
+table.kmap th{font-weight:700;padding:.2rem .5rem;background:var(--tipbg);border-radius:.4rem;font-size:.95rem}
+table.kmap th.corner{background:none;font-size:.85rem;color:var(--muted)}
+.kcell{width:4.2rem;height:4.2rem;border:2px solid var(--line);border-radius:.5rem;background:var(--card);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:0;line-height:1.1}
+.kcell .kv{font-size:1.5rem;font-weight:800}.kcell .km{font-size:.72rem;color:var(--muted)}.kcell .kb{font-size:.68rem;font-weight:700}
+.kcell.one .kv{color:var(--accent)}
+.kcell.sel{outline:4px solid var(--sel);outline-offset:1px}
+.kcell.g0{background:var(--g0)}.kcell.g1{background:var(--g1)}.kcell.g2{background:var(--g2)}.kcell.g3{background:var(--g3)}.kcell.g4{background:var(--g4)}.kcell.g5{background:var(--g5)}
+.kcell.ok{border-color:var(--ok);background:var(--okbg)}.kcell.miss{border-color:var(--bad);border-style:dashed;background:var(--badbg)}.kcell.extra{border-color:var(--bad);background:var(--badbg)}
+.kcell.hl{outline:4px solid var(--hi)}
+@media(max-width:480px){.kcell{width:3.2rem;height:3.2rem}.kcell .kv{font-size:1.2rem}}
+.gchip{display:inline-block;padding:.1rem .5rem;border-radius:.4rem;font-weight:700;margin-right:.3rem}
+.msg{padding:.5rem .8rem;border-radius:.5rem;margin:.5rem 0}.msg.ok{background:var(--okbg);border-left:5px solid var(--ok)}.msg.bad{background:var(--badbg);border-left:5px solid var(--bad)}.msg.info{background:var(--tipbg);border-left:5px solid var(--accent)}
+/* questions */
+.choice{display:block;width:100%;text-align:left;margin:.4rem 0;padding:.6rem .9rem;border:2px solid var(--line);border-radius:.6rem;background:var(--card);cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice[aria-checked=true]{border-color:var(--accent);background:var(--tipbg)}
+.choice.right{border-color:var(--ok);background:var(--okbg)}.choice.wrong{border-color:var(--bad);background:var(--badbg)}
+.tag{font-size:.75rem;font-weight:700;padding:.1rem .5rem;border-radius:1rem;background:var(--tipbg);margin-right:.3rem}
+.qnav{display:flex;flex-wrap:wrap;gap:.3rem;margin:.5rem 0}
+.qnav button{min-width:2.4rem}
+.stat{display:inline-block;margin-right:1.2rem}
+.big{font-size:2.2rem;font-weight:800}
+.bar-bg{background:var(--line);border-radius:1rem;height:.7rem;overflow:hidden;min-width:100px}.bar-fill{background:var(--accent);height:100%}
+.sr{position:absolute;left:-9999px}
+footer{max-width:1100px;margin:0 auto;padding:1rem;color:var(--muted);font-size:.85rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+<h1>COA Reviewer: Logic Gates · Boolean Algebra · K-Maps</h1>
+<nav class="tabs" id="tabs" aria-label="Main sections"></nav>
+<button type="button" class="btn small" id="theme" aria-pressed="false" aria-label="Toggle dark theme">🌓 Theme</button>
+</div></header>
+<main id="main" tabindex="-1">
+<noscript>This reviewer needs JavaScript. Please enable it in your browser.</noscript>
+</main>
+<div style="max-width:1100px;margin:0 auto;padding:0 1rem">
+<details class="how"><summary>How to use this reviewer</summary>
+<p><strong>Learn</strong> the lessons → explore them in the <strong>Visual Lab</strong> → check yourself in <strong>Practice</strong> (instant feedback) → take a <strong>Mock Exam</strong> (answers hidden until submit) → fix weak spots in <strong>Mistake Review</strong>. Explain each answer aloud, not just the final result. Sections marked “Extra support” go beyond your slides. Progress is saved in this browser when storage is available.</p></details>
+</div>
+<div id="live" class="sr" aria-live="polite" role="status"></div>
+<footer>Built from your course slides with corrections noted in the lessons. It does not predict your real exam. <span id="selfcheck"></span></footer>
+<script>
+/* ===== LOGIC CORE (pure functions, no DOM) ===== */
+const VARN = ['A','B','C','D','E'];
+const popcount = x => { let c = 0; while (x) { c += x & 1; x >>= 1; } return c; };
+const toBin = (v, w) => v.toString(2).padStart(w, '0');
+
+function tokenize(src) {
+  const t = [];
+  const s = String(src).replace(/\s+/g, '');
+  for (const c of s) {
+    if (/[A-Ea-e]/.test(c)) t.push({ k: 'v', v: c.toUpperCase() });
+    else if (c === '0' || c === '1') t.push({ k: 'c', v: +c });
+    else if (c === "'" || c === '’') t.push({ k: 'not' });
+    else if (c === '!' || c === '¬' || c === '~') t.push({ k: 'pre' });
+    else if (c === '+' || c === '∨' || c === '|') t.push({ k: 'or' });
+    else if (c === '*' || c === '·' || c === '.' || c === '∧' || c === '&') t.push({ k: 'and' });
+    else if (c === '⊕' || c === '^') t.push({ k: 'xor' });
+    else if (c === '(') t.push({ k: 'lp' });
+    else if (c === ')') t.push({ k: 'rp' });
+    else throw new Error('Unexpected character: ' + c);
+  }
+  return t;
+}
+/* Safe constrained parser: OR < XOR < AND < NOT. No eval. */
+function parse(src) {
+  const toks = tokenize(src); let p = 0;
+  const peek = () => toks[p];
+  const starts = t => t && (t.k === 'v' || t.k === 'c' || t.k === 'lp' || t.k === 'pre');
+  function pOr() { let l = pXor(); while (peek() && peek().k === 'or') { p++; l = { t: 'or', a: l, b: pXor() }; } return l; }
+  function pXor() { let l = pAnd(); while (peek() && peek().k === 'xor') { p++; l = { t: 'xor', a: l, b: pAnd() }; } return l; }
+  function pAnd() {
+    let l = pUn();
+    for (;;) {
+      const t = peek();
+      if (t && t.k === 'and') { p++; l = { t: 'and', a: l, b: pUn() }; }
+      else if (starts(t)) l = { t: 'and', a: l, b: pUn() };
+      else break;
+    }
+    return l;
+  }
+  function pUn() {
+    const t = peek();
+    if (!t) throw new Error('Unexpected end of expression');
+    if (t.k === 'pre') { p++; return { t: 'not', a: pUn() }; }
+    let n = pPrim();
+    while (peek() && peek().k === 'not') { p++; n = { t: 'not', a: n }; }
+    return n;
+  }
+  function pPrim() {
+    const t = toks[p++];
+    if (!t) throw new Error('Unexpected end of expression');
+    if (t.k === 'v') return { t: 'v', n: t.v };
+    if (t.k === 'c') return { t: 'c', v: t.v };
+    if (t.k === 'lp') { const e = pOr(); if (!peek() || peek().k !== 'rp') throw new Error('Missing )'); p++; return e; }
+    throw new Error('Unexpected token');
+  }
+  const ast = pOr();
+  if (p < toks.length) throw new Error('Unexpected extra input');
+  return ast;
+}
+function evalAst(n, env) {
+  switch (n.t) {
+    case 'v': return env[n.n] | 0;
+    case 'c': return n.v;
+    case 'not': return evalAst(n.a, env) ^ 1;
+    case 'and': return evalAst(n.a, env) & evalAst(n.b, env);
+    case 'or': return evalAst(n.a, env) | evalAst(n.b, env);
+    case 'xor': return evalAst(n.a, env) ^ evalAst(n.b, env);
+  }
+  throw new Error('bad node');
+}
+function astVars(n, s = new Set()) {
+  if (n.t === 'v') s.add(n.n);
+  else if (n.t !== 'c') { astVars(n.a, s); if (n.b) astVars(n.b, s); }
+  return s;
+}
+const envFor = (m, vars) => { const e = {}; const n = vars.length; for (let i = 0; i < n; i++) e[vars[i]] = (m >> (n - 1 - i)) & 1; return e; };
+function truthOf(expr, vars) {
+  const ast = parse(expr); const out = [];
+  for (let m = 0; m < (1 << vars.length); m++) out.push(evalAst(ast, envFor(m, vars)));
+  return out;
+}
+function sortedVars(...exprs) {
+  const s = new Set(); exprs.forEach(e => astVars(parse(e), s));
+  return [...s].sort().join('');
+}
+function equivalent(a, b, vars) {
+  vars = vars || sortedVars(a, b);
+  const ta = truthOf(a, vars), tb = truthOf(b, vars);
+  return ta.every((v, i) => v === tb[i]);
+}
+function isTautologyEq(eq) {
+  const [l, r] = eq.split('=');
+  return equivalent(l, r, sortedVars(l, r));
+}
+const GATE_FN = {
+  AND: (a, b) => a & b, OR: (a, b) => a | b, NOT: a => a ^ 1,
+  NAND: (a, b) => (a & b) ^ 1, NOR: (a, b) => (a | b) ^ 1,
+  XOR: (a, b) => a ^ b, XNOR: (a, b) => (a ^ b) ^ 1
+};
+
+/* ===== K-MAP ===== */
+const GRAY = [0, 1, 3, 2];
+function kLayout(n) {
+  if (n === 2) return { n, rows: [0, 1], cols: [0, 1], rb: 1, cb: 1, rv: 'A', cv: 'B' };
+  if (n === 3) return { n, rows: [0, 1], cols: GRAY, rb: 1, cb: 2, rv: 'A', cv: 'BC' };
+  return { n, rows: GRAY, cols: GRAY, rb: 2, cb: 2, rv: 'AB', cv: 'CD' };
+}
+const cellMinterm = (L, r, c) => (L.rows[r] << L.cb) | L.cols[c];
+function mintermBits(m, n) { return toBin(m, n); }
+function mintermDesc(m, n) { return VARN.slice(0, n).map((v, i) => v + '=' + ((m >> (n - 1 - i)) & 1)).join(' '); }
+
+function analyzeGroup(cells, n, ones) {
+  const set = [...new Set(cells)].sort((a, b) => a - b);
+  const size = set.length;
+  if (!size) return { ok: false, msg: 'Select at least one cell first.' };
+  const zeros = set.filter(m => !ones.has(m));
+  if (zeros.length) return { ok: false, msg: 'This selection includes a 0 (' + zeros.map(m => 'm' + m).join(', ') + '). For SOP, a group may contain only 1s.' };
+  if (size & (size - 1)) {
+    let why = 'Group sizes must be 1, 2, 4, 8 or 16 (powers of two). You selected ' + size + ' cells.';
+    if (size === 3 || size === 6) why += ' Three-cell and six-cell groups (often L-shaped) are not allowed. Split them into valid groups; overlap is allowed.';
+    else why += ' Split the cells into valid groups; overlap is allowed.';
+    return { ok: false, msg: why };
+  }
+  let AND = set[0], OR = set[0];
+  set.forEach(m => { AND &= m; OR |= m; });
+  const varying = AND ^ OR, k = Math.log2(size);
+  if (popcount(varying) !== k) {
+    if (size === 2) return { ok: false, msg: 'These two cells touch only diagonally (they differ in ' + popcount(varying) + ' bits). Diagonal cells are never adjacent.' };
+    return { ok: false, msg: 'These ' + size + ' cells are not a single rectangle (they could be L-shaped or scattered). A valid group is a rectangle, and it may wrap around the edges.' };
+  }
+  const lits = [], kept = [], removed = [];
+  for (let i = 0; i < n; i++) {
+    const b = n - 1 - i, v = VARN[i];
+    if ((varying >> b) & 1) removed.push(v);
+    else if ((AND >> b) & 1) { lits.push(v); kept.push(v + ' stays 1 → ' + v); }
+    else { lits.push(v + "'"); kept.push(v + ' stays 0 → ' + v + "'"); }
+  }
+  return { ok: true, cells: set, term: lits.length ? lits.join('') : '1', kept, removed, size, varying, fixedMask: ~varying };
+}
+function sopFromGroups(groups, n) {
+  const terms = [...new Set(groups.map(g => groupTerm(g, n)))];
+  return terms.length ? terms.join('+') : '0';
+}
+function groupTerm(cells, n) {
+  const a = analyzeGroup(cells, n, new Set(cells));
+  return a.ok ? a.term : '?';
+}
+function checkSOP(expr, n, ones) {
+  const vars = VARN.slice(0, n).join('');
+  const t = truthOf(expr, vars); const bad = [];
+  for (let m = 0; m < (1 << n); m++) if (t[m] !== (ones.has(m) ? 1 : 0)) bad.push(m);
+  return bad;
+}
+function primeImplicants(ones, n) {
+  const key = x => x.v + ':' + x.mask;
+  let cur = [...ones].map(m => ({ v: m, mask: 0 }));
+  const primes = [];
+  while (cur.length) {
+    const next = new Map(), used = new Set();
+    for (let i = 0; i < cur.length; i++) for (let j = i + 1; j < cur.length; j++) {
+      const a = cur[i], b = cur[j];
+      if (a.mask !== b.mask) continue;
+      const d = a.v ^ b.v;
+      if (popcount(d) !== 1) continue;
+      const nx = { v: a.v & ~d, mask: a.mask | d };
+      next.set(key(nx), nx); used.add(key(a)); used.add(key(b));
+    }
+    cur.forEach(x => { if (!used.has(key(x))) primes.push(x); });
+    cur = [...next.values()];
+  }
+  const full = (1 << n) - 1;
+  return primes.map(p => {
+    const cells = [];
+    for (let m = 0; m <= full; m++) if ((m & ~p.mask) === p.v) cells.push(m);
+    return { cells, lits: n - popcount(p.mask) };
+  });
+}
+function minimalCover(ones, n) {
+  if (!ones.size) return { groups: [], terms: 0, lits: 0, expr: '0' };
+  const primes = primeImplicants(ones, n);
+  const need = [...ones];
+  let best = null;
+  const covers = sel => need.every(m => sel.some(p => p.cells.includes(m)));
+  for (let k = 1; k <= primes.length && !best; k++) {
+    (function rec(start, sel) {
+      if (sel.length === k) {
+        if (covers(sel)) {
+          const lits = sel.reduce((s, p) => s + p.lits, 0);
+          if (!best || lits < best.lits) best = { sel: sel.slice(), lits };
+        }
+        return;
+      }
+      for (let i = start; i < primes.length; i++) { sel.push(primes[i]); rec(i + 1, sel); sel.pop(); }
+    })(0, []);
+  }
+  const groups = best.sel.map(p => p.cells);
+  return { groups, terms: groups.length, lits: best.lits, expr: sopFromGroups(groups, n) };
+}
+function literalCount(groups, n) {
+  return groups.reduce((s, g) => { const t = groupTerm(g, n); return s + (t === '1' ? 0 : t.replace(/'/g, '').length); }, 0);
+}
+
+/* ===== helpers ===== */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+/* ===== QUESTION BANK ===== */
+const TOPICS = { gates: 'Logic Gates', bool: 'Boolean Algebra', kmap: 'Karnaugh Maps' };
+const DIFF = { 1: 'Easy', 2: 'Medium', 3: 'Challenging' };
+const Q = []; const _cnt = { gates: 0, bool: 0, kmap: 0 };
+const _id = t => t[0] + (++_cnt[t]);
+function MC(topic, diff, lesson, q, choices, correct, explain, mistake, hint, meta) {
+  Q.push({ id: _id(topic), type: 'mc', topic, diff, lesson, q, choices, correct, explain, mistake, hint, meta });
+}
+function TT(topic, diff, lesson, q, vars, expr, out, explain, mistake, hint) {
+  Q.push({ id: _id(topic), type: 'tt', topic, diff, lesson, q, vars, expr, out, explain, mistake, hint, correct: truthOf(expr, vars) });
+}
+function KF(topic, diff, lesson, q, n, mins, explain, mistake, hint) {
+  Q.push({ id: _id(topic), type: 'kf', topic, diff, lesson, q, n, mins, explain, mistake, hint });
+}
+
+/* ---- Logic gates ---- */
+MC('gates', 1, 'gates', 'Which gate outputs 1 only when both inputs are 1?', ['AND', 'OR', 'XOR', 'NAND'], 0,
+  'AND means “both”. In the truth table only the row A=1, B=1 gives 1.', 'Confusing AND with OR. OR needs only at least one 1.', 'Think “both”.');
+MC('gates', 1, 'gates', 'An OR gate has A = 1 and B = 0. What is the output?', ['0', '1', 'Cannot tell', '10'], 1,
+  'OR outputs 1 when at least one input is 1. A is 1, so the output is 1.', 'Expecting 1 and 0 to “cancel”. OR only asks if at least one input is 1.', 'OR = at least one.');
+MC('gates', 1, 'gates', 'How many inputs does a NOT gate have?', ['1', '2', '3', '0'], 0,
+  'NOT is an inverter. It has one input and one output.', 'Drawing NOT with two inputs. Only the other gates in this lesson use two.', 'NOT reverses one signal.');
+MC('gates', 1, 'gates', 'A small circle (bubble) at a gate’s output means:', ['The output is inverted (reversed)', 'The gate has an extra input', 'The output is always 1', 'The gate is switched off'], 0,
+  'A bubble means inversion. AND + bubble = NAND, OR + bubble = NOR, XOR + bubble = XNOR, and the triangle + bubble is NOT.', 'Ignoring the bubble when reading a symbol.', 'The bubble is the “NOT part”.');
+TT('gates', 1, 'gates', 'Complete the truth table for a NAND gate: Y = (AB)′.', 'AB', "(AB)'", 'Y',
+  'NAND is AND followed by NOT. AND gives 0,0,0,1, so NAND gives 1,1,1,0.', 'Filling in the AND column by mistake. NAND is the opposite of AND.', 'Work out AND first, then reverse each answer.');
+TT('gates', 2, 'gates', 'Complete the truth table for an XOR gate: Y = A ⊕ B.', 'AB', 'A^B', 'Y',
+  'XOR is 1 when the two inputs are different: rows 01 and 10.', 'Making row 11 equal to 1 (that is OR, not XOR).', 'Different = 1.');
+TT('gates', 2, 'gates', 'Complete the truth table for a NOR gate: Y = (A+B)′.', 'AB', "(A+B)'", 'Y',
+  'NOR is OR followed by NOT. OR gives 0,1,1,1 so NOR gives 1,0,0,0.', 'Thinking NOR is 1 when either input is 0. NOR is 1 only when both inputs are 0.', 'Both 0 → 1.');
+TT('gates', 2, 'gates', 'Complete the truth table for an XNOR gate: Y = (A ⊕ B)′.', 'AB', "(A^B)'", 'Y',
+  'XNOR is 1 when the inputs are the same: rows 00 and 11.', 'Mixing XNOR up with XOR. XNOR is the opposite of XOR.', 'Same = 1.');
+MC('gates', 1, 'gates', 'What does a NAND gate output when both inputs are 1?', ['0', '1', 'Same as input A', 'Cannot be determined'], 0,
+  'AND(1,1)=1, then the NOT part reverses it to 0. NAND is 0 only for 11.', 'Forgetting the inversion and answering 1.', 'AND, then NOT.');
+MC('gates', 1, 'gates', 'Which gate outputs 1 only when both inputs are 0?', ['NOR', 'NAND', 'XOR', 'AND'], 0,
+  'NOR = NOT(OR). OR is 0 only for 00, so NOR is 1 only for 00. NAND is also 1 for 01 and 10.', 'Choosing NAND. NAND gives 1 in three rows, not only one.', 'Test the row 00 for each gate.');
+MC('gates', 2, 'gates', 'Which pair are the universal gates?', ['NAND and NOR', 'XOR and XNOR', 'AND and OR', 'NOT and XOR'], 0,
+  'Each of NAND and NOR can build every other logic function by itself.', 'Believing XOR/XNOR are universal because they appear under that heading in the slides.', 'Think of the two gates with bubbles on AND and OR.');
+MC('gates', 2, 'gates', 'The slides list XOR and XNOR under “Universal Logic Gates”. What is the correct statement?', ['XOR and XNOR are special gates, not universal on their own', 'XOR and XNOR are universal because they have curved symbols', 'XNOR is universal but XOR is not', 'Every gate is universal'], 0,
+  'Only NAND and NOR are universal. XOR and XNOR are useful special gates (different / same) but cannot build every function alone.', 'Trusting the slide heading instead of the definition of “universal”.', 'Which two gates build everything alone?');
+MC('gates', 2, 'gates', 'Which symbol description matches the XOR gate?', ['OR gate with an extra curved line on the input side', 'AND gate with a small circle', 'A triangle followed by a small circle', 'A D-shaped symbol'], 0,
+  'XOR looks like OR with an extra curve at the inputs. D-shaped is AND; triangle + bubble is NOT; AND + bubble is NAND.', 'Mixing up XOR (extra curve) and XNOR (extra curve plus bubble).', 'Look for the extra curve.');
+MC('gates', 2, 'examples', 'Mom says “You can have ice cream or cake,” and she means only one of them. Which gate describes that meaning?', ['XOR', 'OR', 'AND', 'NAND'], 0,
+  'She means exactly one. XOR is 1 when inputs differ. OR would also allow both; NAND would also allow neither.', 'Choosing OR because the English word is “or”. Everyday “or” often means XOR.', 'Exactly one.');
+MC('gates', 2, 'gates', 'An XOR gate has A = 1 and B = 1. What is the output?', ['0', '1', 'A', 'Cannot be determined'], 0,
+  'Both inputs are the same, so XOR outputs 0.', 'Answering 1 because OR(1,1)=1.', 'Same inputs → XOR is 0.');
+MC('gates', 3, 'gates', 'Both inputs of a NAND gate are connected to the same signal A. The circuit behaves like:', ['A NOT gate', 'An AND gate', 'An OR gate', 'An XOR gate'], 0,
+  "(A·A)′ = A′ because A·A = A. So the gate inverts A.", 'Thinking a NAND with joined inputs still outputs A.', 'Use A·A = A, then invert.');
+MC('gates', 3, 'gates', 'A NOR gate receives A = 0 and B = 0. Its output feeds a NOT gate. What is the final output?', ['0', '1', 'High impedance', 'Error'], 0,
+  'NOR(0,0)=1. NOT(1)=0. The pair together acts like an OR gate.', 'Stopping after the NOR step.', 'Trace one gate at a time.');
+MC('gates', 3, 'gates', 'Extra support: a three-input XOR has inputs 1, 1, 1. What is its output?', ['1', '0', '3', 'Cannot be determined'], 0,
+  'For more than two inputs, XOR is 1 when an odd number of inputs are 1. Three 1s is odd, so output 1.', 'Using the two-input shortcut “exactly one” for three inputs.', 'Count the 1s: odd or even?');
+MC('gates', 2, 'examples', 'Which value of x makes “if (x > 0 AND x <= 10)” true?', ['5', '0', '11', '−3'], 0,
+  'AND needs both comparisons true. Only 5 is greater than 0 and at most 10.', 'Using 0 or 10 as boundaries without checking > versus ≤.', 'Test each x in both comparisons.');
+MC('gates', 1, 'gates', 'An XNOR gate outputs 1 when:', ['Both inputs are the same', 'Both inputs are different', 'Only A is 1', 'Only B is 1'], 0,
+  'XNOR is the opposite of XOR: output 1 when inputs match (00 or 11).', 'Mixing XNOR with XOR.', 'N means reverse XOR.');
+MC('gates', 2, 'examples', 'Which gate matches set intersection (the common elements)?', ['AND', 'OR', 'NOT', 'XOR'], 0,
+  'Intersection = elements in both sets = AND. Union = OR. Complement = NOT.', 'Mixing union and intersection.', 'Common elements = both.');
+MC('gates', 2, 'gates', 'An XNOR gate has A = 0 and B = 1. What is the output?', ['0', '1', 'Same as A', 'Cannot be determined'], 0,
+  'The inputs are different, so XNOR outputs 0.', 'Forgetting XNOR is 1 only for equal inputs.', 'Are the inputs the same?');
+MC('gates', 3, 'gates', 'Which gate behaves like an OR gate followed by a NOT gate?', ['NOR', 'NAND', 'XNOR', 'XOR'], 0,
+  'NOR is NOT(OR). NAND is NOT(AND).', 'Mixing NAND and NOR.', 'Which letter pair spells “NOT OR”?');
+
+/* ---- Boolean algebra ---- */
+MC('bool', 1, 'boolean', 'In Boolean algebra (OR), what is 1 + 1?', ['1', '2', '10', '0'], 0,
+  'Boolean + is OR, not ordinary addition. OR asks whether at least one input is 1, so 1 + 1 = 1.', 'Using ordinary arithmetic (2) or binary addition (10).', 'OR: at least one.');
+MC('bool', 1, 'boolean', 'What is the order of evaluation in a Boolean expression?', ['Parentheses → NOT → AND → OR', 'OR → AND → NOT → Parentheses', 'Parentheses → OR → AND → NOT', 'AND → OR → NOT → Parentheses'], 0,
+  'Parentheses first, then NOT, then AND, then OR. In A + BC′: C′ first, then B·C′, then OR with A.', 'Doing OR before AND.', 'Brackets, then NOT, then × before +.');
+MC('bool', 1, 'boolean', 'How many rows are in a complete truth table with 3 inputs?', ['8', '6', '9', '3'], 0,
+  'Rows = 2ⁿ. For n = 3, 2³ = 8.', 'Using n² or 2n instead of 2ⁿ.', '2 × 2 × 2.');
+MC('bool', 1, 'laws', 'A + 0 equals:', ['A', '0', '1', 'A′'], 0,
+  'Identity law: OR with 0 leaves A unchanged.', 'Mixing identity with null (A + 1 = 1).', 'Adding 0 changes nothing.');
+MC('bool', 1, 'laws', 'A · 0 equals:', ['0', 'A', '1', 'A′'], 0,
+  'Null law: AND with 0 is always 0.', 'Mixing it up with A · 1 = A.', 'AND needs both to be 1.');
+MC('bool', 2, 'laws', 'A + A′ equals:', ['1', '0', 'A', 'A′'], 0,
+  'Complement law: either A or its opposite is 1, so the OR is always 1. (A · A′ = 0.)', 'Mixing up A + A′ = 1 and A · A′ = 0.', 'One of them must be 1.');
+MC('bool', 2, 'laws', 'A · A equals:', ['A', '0', '1', '2A'], 0,
+  'Idempotent law: repeating A with AND (or OR) changes nothing.', 'Treating it like ordinary multiplication or addition (2A).', 'Test A = 0 and A = 1.');
+MC('bool', 2, 'laws', '(A + B) + C = A + (B + C) is which law?', ['Associative law', 'Commutative law', 'Distributive law', 'Complement law'], 0,
+  'Associative: the order of grouping does not matter for the same operation.', 'Confusing associative (regrouping) with commutative (swapping).', 'Only the brackets move.');
+MC('bool', 2, 'laws', 'A · B = B · A is which law?', ['Commutative law', 'Associative law', 'Distributive law', 'Identity law'], 0,
+  'Commutative: swapping the order of inputs does not change the result.', 'Confusing it with associative.', 'The variables swap places.');
+MC('bool', 2, 'laws', 'A + BC = (A + B)(A + C) is which law?', ['Distributive law (OR over AND)', 'Associative law', 'Identity law', 'Null law'], 0,
+  'It distributes OR over AND. This Boolean form does not work for ordinary numbers.', 'Expecting only the familiar form A(B + C) = AB + AC.', 'Both ops appear and one is distributed over the other.');
+MC('bool', 2, 'laws', 'Which equation is NOT a valid Boolean law?', ['A(B + C) = AB + AC', 'A + BC = (A + B)(A + C)', 'A + BC = (A + B)C', 'A + A′ = 1'], 2,
+  'Test A=1, B=0, C=0: left side = 1, right side (1+0)·0 = 0. The correct form is (A + B)(A + C). The others are valid.', 'Writing C instead of (A + C) when applying the OR-over-AND law.', 'Try one input row that makes the sides differ.',
+  { type: 'eqs', correctIsInvalid: true });
+TT('bool', 2, 'boolean', 'Complete the truth table for F = A + B·C′ (from the slides).', 'ABC', "A+BC'", 'F',
+  'For each row: reverse C, AND the result with B, then OR with A. F is 1 whenever A = 1, and also when B=1 and C=0.', 'Doing OR before AND, or forgetting to reverse C.', 'Order: NOT, AND, OR.');
+MC('bool', 2, 'boolean', 'For F = A + BC′, what is F when A = 0, B = 1, C = 0?', ['1', '0', 'Cannot tell', '2'], 0,
+  "C′ = 1, B·C′ = 1, F = 0 + 1 = 1.", 'Forgetting to reverse C first.', 'Compute C′, then BC′.');
+MC('bool', 2, 'laws', 'Simplify A + AB.', ['A', 'B', 'AB', 'A + B'], 0,
+  'A + AB = A(1 + B) = A·1 = A. (Absorption.)', 'Leaving it as A + B.', 'Factor out A.', { type: 'simp', ref: 'A+AB' });
+MC('bool', 2, 'laws', 'Simplify AB + AB′.', ['A', 'B', 'AB′', '1'], 0,
+  'AB + AB′ = A(B + B′) = A·1 = A.', 'Forgetting that B + B′ = 1.', 'Factor out A.', { type: 'simp', ref: "AB+AB'" });
+MC('bool', 3, 'laws', 'Simplify (A + B)(A + B′).', ['A', 'B', 'A + B', '1'], 0,
+  'Use the distributive law in reverse: A + BB′ = A + 0 = A.', 'Multiplying out like ordinary algebra and getting stuck.', 'Treat A + (…)(…) with the OR-over-AND form.', { type: 'simp', ref: "(A+B)(A+B')" });
+MC('bool', 3, 'laws', 'Extra support (De Morgan): (AB)′ equals:', ['A′ + B′', 'A′B′', 'A + B', 'AB′'], 0,
+  'De Morgan: complement each input and swap AND with OR. (AB)′ = A′ + B′.', 'Complementing the inputs but keeping AND.', 'Check A=1, B=0.', { type: 'simp', ref: "(AB)'" });
+MC('bool', 3, 'laws', 'Extra support (De Morgan): (A + B)′ equals:', ['A′B′', 'A′ + B′', 'A + B', 'AB'], 0,
+  'Complement each input and swap OR with AND: (A + B)′ = A′B′.', 'Keeping OR after complementing the inputs.', 'NOR is 1 only when both inputs are 0.', { type: 'simp', ref: "(A+B)'" });
+MC('bool', 3, 'laws', "Simplify A′B + AB + A′B′.", ["A′ + B", "A + B′", "A′B", "B"], 0,
+  "A′B + AB = B. Then B + A′B′ = B + A′ (since B + A′B′ = (B + A′)(B + B′)). Result: A′ + B.", 'Stopping after the first step and answering B.', 'Combine A′B and AB first.', { type: 'simp', ref: "A'B+AB+A'B'" });
+MC('bool', 3, 'laws', 'Extra support: simplify A + A′B.', ['A + B', 'A′B', 'A', 'B'], 0,
+  "A + A′B = (A + A′)(A + B) = 1·(A + B) = A + B, by the distributive law.", 'Absorbing wrongly and answering A.', 'Use A + BC = (A + B)(A + C).', { type: 'simp', ref: "A+A'B" });
+MC('bool', 3, 'laws', "Simplify AB + AB′C.", ['AB + AC', 'A + BC', 'AB + C', "AB′ + AC"], 0,
+  "AB + AB′C = A(B + B′C) = A(B + C) = AB + AC.", 'Dropping A from the second term or over-simplifying to A + BC.', 'Factor out A first.', { type: 'simp', ref: "AB+AB'C" });
+MC('bool', 1, 'boolean', 'The goal of simplifying a Boolean expression is to:', ['Keep the same output with fewer operations', 'Change the output', 'Add more gates', 'Remove all variables'], 0,
+  'A simplified expression gives the same output for every input but needs fewer literals/gates.', 'Thinking simplification can change the function.', 'Same output, simpler circuit.');
+MC('bool', 2, 'boolean', 'In the slides, “1815 – 1864” beside George Boole refers to:', ['His lifespan', 'The year Boolean algebra was patented', 'The years digital computers were built', 'The voltage range of logic HIGH'], 0,
+  'Those are the years Boole lived. They are not a precise date of introduction.', 'Reading the range as a development period.', 'Think of a person’s birth and death years.');
+MC('bool', 2, 'boolean', 'What is (A · B)′ when A = 1 and B = 1?', ['0', '1', 'A', 'Cannot tell'], 0,
+  'The bar covers the whole expression: do AB = 1 first, then invert to 0.', 'Inverting each input first (that would be A′B′ = 0 here too, but it is the wrong method).', 'Inside first, then invert.');
+
+/* ---- Karnaugh maps ---- */
+MC('kmap', 1, 'kmap', 'Which order is used for K-map axis labels?', ['00, 01, 11, 10', '00, 01, 10, 11', '00, 10, 01, 11', '00, 11, 01, 10'], 0,
+  'Gray code: only one bit changes at each step, so neighbours are valid adjacent cells.', 'Using normal binary order 00, 01, 10, 11.', 'Look for one-bit changes.');
+MC('kmap', 1, 'kmap', 'How many cells are in a 3-variable K-map?', ['8', '6', '4', '16'], 0, 'Cells = 2ⁿ = 2³ = 8.', 'Confusing it with the 2-variable (4) or 4-variable (16) map.', '2 × 2 × 2.');
+MC('kmap', 1, 'kmap', 'How many cells are in a 4-variable K-map?', ['16', '8', '12', '32'], 0, 'Cells = 2⁴ = 16 (a 4×4 grid).', 'Confusing it with the 5-variable total (32).', '2⁴.');
+MC('kmap', 1, 'kmap', 'Which group size is valid in a K-map?', ['4', '3', '5', '6'], 0, 'Group sizes must be powers of two: 1, 2, 4, 8, 16.', 'Making groups of 3 or 6.', 'Powers of two.');
+MC('kmap', 1, 'kmap', 'For SOP simplification, which cells do you group?', ['The 1s', 'The 0s', 'Only m0', 'The empty cells'], 0, 'SOP groups the 1s. POS groups the 0s.', 'Grouping 0s for SOP.', 'SOP = Sum of Products = 1s.');
+MC('kmap', 1, 'kmap', 'For POS simplification, which cells do you group?', ['The 0s', 'The 1s', 'Only m15', 'Cells with the largest minterms'], 0, 'POS groups the 0s (maxterms) and gives sum terms.', 'Using the SOP rule for POS.', 'The opposite of SOP.');
+KF('kmap', 2, 'kmap', 'Place the 1s for F(A,B,C) = Σm(1,3,6,7). All other cells are 0.', 3, [1, 3, 6, 7],
+  'Click the cells labelled m1, m3, m6 and m7. Remember the column order 00, 01, 11, 10.', 'Using binary order in the headings, which puts minterms in the wrong cells.', 'A is the most significant bit: m6 = 110.');
+MC('kmap', 2, 'kmap', 'In a 3-variable map (A \\ BC), which minterm is in row A = 1, column BC = 10?', ['m6', 'm5', 'm2', 'm7'], 0,
+  'ABC = 110 = decimal 6, so m6.', 'Reading the column labels as binary order (10 → 2) instead of using ABC together.', 'Write A, B, C together.');
+MC('kmap', 2, 'kmap', 'In a 4-variable map, which minterm is in row AB = 11, column CD = 01?', ['m13', 'm7', 'm11', 'm14'], 0,
+  'ABCD = 1101 = 13, so m13.', 'Using the position in the grid instead of the binary value.', 'Join the row and column bits.');
+MC('kmap', 2, 'kmap', 'Are diagonal cells adjacent in a K-map?', ['No, diagonal cells differ in two bits', 'Yes, they differ in one bit', 'Yes, but only in 2-variable maps', 'Yes, if both contain 1'], 0,
+  'Adjacent cells differ in one bit. Diagonal cells differ in two, so they are never adjacent.', 'Drawing diagonal groups.', 'Count the bits that change.');
+MC('kmap', 2, 'kmap', 'The first and last columns of a K-map are adjacent:', ['True — the map wraps around', 'False — they are far apart', 'Only if both are 0', 'Only in 2-variable maps'], 0,
+  'With Gray code, 10 and 00 differ by one bit, so edges connect. In a 4-variable map the top and bottom rows connect too.', 'Missing wraparound groups.', '10 → 00 is a one-bit change.');
+MC('kmap', 2, 'kmap', 'Simplify F(A,B) = Σm(1,2,3).', ['A + B', 'AB', 'A′B′', 'A′ + B′'], 0,
+  'Pair m1,m3 gives B; pair m2,m3 gives A. F = A + B. m3 is used twice (overlap is allowed).', 'Trying a three-cell group.', 'Two groups of 2.', { type: 'simp', n: 2, mins: [1, 2, 3] });
+MC('kmap', 2, 'kmap', 'Simplify F(A,B,C) = Σm(1,3,6,7).', ["A′C + AB", "AC + A′B", "A′B + AC′", 'A + C'], 0,
+  "m1+m3: A=0 and C=1 stay → A′C. m6+m7: A=1 and B=1 stay → AB. F = A′C + AB.", 'Writing the complement for the wrong variable.', 'Fixed 1 → normal; fixed 0 → complement.', { type: 'simp', n: 3, mins: [1, 3, 6, 7] });
+MC('kmap', 2, 'kmap', 'Simplify F(A,B,C) = Σm(0,2,4,6).', ["C′", 'C', "A′B′", "B′"], 0,
+  'The four 1s form one wraparound group. A and B change; C stays 0 → C′.', 'Missing the wraparound and writing several terms.', 'Which variable never changes?', { type: 'simp', n: 3, mins: [0, 2, 4, 6] });
+MC('kmap', 3, 'kmap', 'Simplify F(A,B,C,D) = Σm(0,1,2,3,12,13,14,15).', ["A′B′ + AB", "A′B + AB′", 'A + B', "C′D′ + CD"], 0,
+  "Top row (m0–m3): A=0,B=0 → A′B′. Third row (m12–m15): A=1,B=1 → AB. The rows are not adjacent, so they do not merge.", 'Trying one big group of eight.', 'Two groups of four.', { type: 'simp', n: 4, mins: [0, 1, 2, 3, 12, 13, 14, 15] });
+MC('kmap', 3, 'kmap', 'Simplify F(A,B,C,D) = Σm(0,2,8,10) (the four corner cells).', ["B′D′", "A′D′", "B′C′", 'BD'], 0,
+  "The four corners form one group by wraparound. A and C change; B stays 0 and D stays 0 → B′D′.", 'Not noticing that the corners are adjacent.', 'Check which variables stay constant.', { type: 'simp', n: 4, mins: [0, 2, 8, 10] });
+MC('kmap', 3, 'kmap', 'Simplify F(A,B,C) = Σm(2,3,6,7).', ['B', 'A', 'C', "B′"], 0,
+  'These four cells all have B = 1. A and C change, so F = B.', 'Writing B′ instead of B.', 'B is 1 in all four minterms.', { type: 'simp', n: 3, mins: [2, 3, 6, 7] });
+MC('kmap', 3, 'kmap', 'A group of 4 cells in a 3-variable K-map removes how many variables?', ['2 (one literal remains)', '1', '3', '0'], 0,
+  'A group of 2ᵏ cells removes k variables. 4 = 2², so two variables disappear.', 'Thinking a bigger group keeps more variables.', '4 = 2².');
+MC('kmap', 2, 'kmap', 'Which selection is NOT a valid K-map group?', ['An L-shaped group of 3 cells', 'Two horizontally adjacent 1s', 'The four corners of a 4-variable map', 'The first and last cells of the same row'], 0,
+  'Groups must be rectangles with power-of-two sizes. An L-shape of 3 breaks both rules. Corners and edge pairs are valid by wraparound.', 'Rejecting wraparound groups or accepting L-shapes.', 'Rectangle + power of two.');
+MC('kmap', 3, 'kmap', 'Simplify F(A,B,C,D) = Σm(0,1,4,5,8,9,12,13).', ["C′", "D′", "B′", "A′C′"], 0,
+  'These 8 cells all have C = 0. A, B and D change, so F = C′. A group of 8 removes 3 variables.', 'Making two groups of four instead of one group of eight.', 'Look for the variable that is always 0.', { type: 'simp', n: 4, mins: [0, 1, 4, 5, 8, 9, 12, 13] });
+MC('kmap', 3, 'kmap', 'Simplify F(A,B,C,D) = Σm(0,1,2,5,8,9,10).', ["B′D′ + B′C′ + A′C′D", "B′D′ + B′C′ + A′C′", "B′D′ + B′C′ + CD", "B′D′ + A′C′D + AC′"], 0,
+  "Corners m0,2,8,10 → B′D′. m0,1,8,9 → B′C′. m5 needs m1 and m5 → A′C′D. Check: all seven 1s are covered and no 0 is included.", 'Using A′C′ for the last group: it would include m4, which is 0.', 'Corner group first. Then cover m5 without crossing a 0.', { type: 'simp', n: 4, mins: [0, 1, 2, 5, 8, 9, 10] });
+KF('kmap', 2, 'kmap', 'Place the 1s for F(A,B,C,D) = Σm(0,2,8,10). All other cells are 0.', 4, [0, 2, 8, 10],
+  'Four corner cells: m0, m2, m8 and m10. They are adjacent by wraparound.', 'Placing minterms using binary order instead of Gray-code positions.', 'Row labels and column labels are both 00, 01, 11, 10.');
+MC('kmap', 2, 'kmap', 'In the five-variable extension, which variable selects between the two 4×4 maps?', ['A (A = 0 map and A = 1 map)', 'E', 'D', 'There is no select variable'], 0,
+  'The slides show an A = 0 map (m0–m15) and an A = 1 map (m16–m31) with BC \\ DE headings.', 'Treating the two maps as unrelated.', 'The maps are labelled A = 0 and A = 1.');
+MC('kmap', 3, 'kmap', 'In the five-variable extension, a group that covers the same positions in both maps removes which variable?', ['A (the map-select variable)', 'E', 'All variables', 'None'], 0,
+  'Same-position cells across the two maps are adjacent (only A differs). A group spanning both maps loses A.', 'Forgetting that corresponding cells are adjacent.', 'Which bit differs between m5 and m21?');
+MC('kmap', 2, 'kmap', 'Can one cell belong to two different groups?', ['Yes, overlap is allowed', 'No, each cell can be used once', 'Only 0 cells can overlap', 'Only in 2-variable maps'], 0,
+  'Overlap is allowed and often helps make larger groups, as in F = A + B where m3 is used twice.', 'Avoiding overlap and making smaller groups.', 'Think of m3 in A + B.');
+
+/* ===== BOOLEAN LAWS (Law Explorer) ===== */
+const LAWS = [
+  { name: 'Identity (OR form)', l: 'A+0', r: 'A', why: 'ORing with 0 adds nothing. If A=1 the result is 1; if A=0 the result is 0, the same as A.' },
+  { name: 'Identity (AND form)', l: 'A·1', r: 'A', why: 'ANDing with 1 keeps A: 1 is “true”, so only A decides the result.' },
+  { name: 'Null (OR form)', l: 'A+1', r: '1', why: 'If one OR input is 1, the output is 1 whatever A is.' },
+  { name: 'Null (AND form)', l: 'A·0', r: '0', why: 'If one AND input is 0, the output is 0 whatever A is.' },
+  { name: 'Idempotent (OR form)', l: 'A+A', r: 'A', why: 'Repeating A in an OR cannot create a new 1.' },
+  { name: 'Idempotent (AND form)', l: 'A·A', r: 'A', why: 'Repeating A in an AND cannot create a new 0.' },
+  { name: 'Complement (OR form)', l: "A+A'", r: '1', why: 'A and its opposite cannot both be 0, so the OR is always 1.' },
+  { name: 'Complement (AND form)', l: "A·A'", r: '0', why: 'A and its opposite cannot both be 1, so the AND is always 0.' },
+  { name: 'Commutative (OR)', l: 'A+B', r: 'B+A', why: 'OR only asks if at least one input is 1; the order is irrelevant.' },
+  { name: 'Commutative (AND)', l: 'A·B', r: 'B·A', why: 'AND only asks if both inputs are 1; the order is irrelevant.' },
+  { name: 'Associative (OR)', l: '(A+B)+C', r: 'A+(B+C)', why: 'Any grouping of the same OR gives “is at least one of A, B, C equal to 1?”.' },
+  { name: 'Associative (AND)', l: '(A·B)·C', r: 'A·(B·C)', why: 'Any grouping of the same AND gives “are all of A, B, C equal to 1?”.' },
+  { name: 'Distributive (OR over AND)', l: 'A+(B·C)', r: '(A+B)·(A+C)', why: 'Both sides are 1 when A=1, or when B and C are both 1. This Boolean form does not hold for ordinary numbers.' },
+  { name: 'Distributive (AND over OR)', l: 'A·(B+C)', r: 'A·B+A·C', why: 'Both sides are 1 only when A=1 and at least one of B, C is 1.' },
+  { name: 'Absorption (Extra support)', l: 'A+A·B', r: 'A', why: 'If A=1 the result is 1. If A=0 then AB=0 too. So the AB term adds nothing.', extra: true },
+  { name: 'Double negation (Extra support)', l: "(A')'", r: 'A', why: 'Reversing twice gives the original value.', extra: true },
+  { name: 'De Morgan 1 (Extra support)', l: "(A·B)'", r: "A'+B'", why: 'The AND is 0 exactly when at least one input is 0, i.e. when A′ or B′ is 1.', extra: true },
+  { name: 'De Morgan 2 (Extra support)', l: "(A+B)'", r: "A'·B'", why: 'The OR is 0 exactly when both inputs are 0, i.e. when A′ and B′ are both 1.', extra: true }
+];
+
+/* ===== K-MAP PRESETS ===== */
+const PRESETS = [
+  { name: 'Σm(1,2,3) → A + B', n: 2, mins: [1, 2, 3], ans: 'A+B' },
+  { name: "Σm(1,3,6,7) → A′C + AB", n: 3, mins: [1, 3, 6, 7], ans: "A'C+AB" },
+  { name: "Σm(0,1,2,3,12,13,14,15) → A′B′ + AB", n: 4, mins: [0, 1, 2, 3, 12, 13, 14, 15], ans: "A'B'+AB" },
+  { name: "Σm(0,2,4,6) → C′ (wraparound)", n: 3, mins: [0, 2, 4, 6], ans: "C'" },
+  { name: "Σm(0,2,8,10) → B′D′ (four corners)", n: 4, mins: [0, 2, 8, 10], ans: "B'D'" }
+];
+
+/* ===== GLOSSARY ===== */
+const GLOSSARY = [
+  ['Binary variable', 'A variable that can be only 0 or 1.'],
+  ['Boolean algebra', 'The algebra of two values (TRUE/1 and FALSE/0) with AND, OR and NOT.'],
+  ['HIGH / LOW', 'The two voltage ranges that represent 1 and 0. The exact voltages depend on the hardware.'],
+  ['Logic gate', 'An electronic circuit that applies a logical rule to binary inputs and gives a binary output.'],
+  ['Truth table', 'A table listing the output for every possible input combination. n inputs give 2ⁿ rows.'],
+  ['AND', 'Output 1 only when both inputs are 1. Written AB, A·B or A ∧ B.'],
+  ['OR', 'Output 1 when at least one input is 1. Written A + B or A ∨ B. Note 1 + 1 = 1.'],
+  ['NOT', 'Reverses one input. Written A′, ¬A or A with a bar.'],
+  ['NAND', 'AND followed by NOT. Output 0 only when both inputs are 1. Universal gate.'],
+  ['NOR', 'OR followed by NOT. Output 1 only when both inputs are 0. Universal gate.'],
+  ['XOR', 'Exclusive OR. For two inputs, 1 when the inputs differ. For more inputs, 1 when an odd number of inputs are 1.'],
+  ['XNOR', 'Exclusive NOR. For two inputs, 1 when the inputs are the same.'],
+  ['Universal gate', 'A gate type that alone can build every logic function: NAND and NOR.'],
+  ['Bubble', 'The small circle on a gate symbol that means the output is inverted.'],
+  ['Complement', 'The opposite value of a variable, written A′.'],
+  ['Literal', 'A variable or its complement, such as A or A′.'],
+  ['Precedence', 'The order of evaluation: parentheses, NOT, AND, OR.'],
+  ['Identity law', 'A + 0 = A and A · 1 = A.'],
+  ['Null law', 'A + 1 = 1 and A · 0 = 0.'],
+  ['Idempotent law', 'A + A = A and A · A = A.'],
+  ['Complement law', 'A + A′ = 1 and A · A′ = 0.'],
+  ['Commutative law', 'The order of two inputs does not matter: A + B = B + A, AB = BA.'],
+  ['Associative law', 'Grouping does not matter for the same operation: (A + B) + C = A + (B + C).'],
+  ['Distributive law', 'A(B + C) = AB + AC and A + BC = (A + B)(A + C).'],
+  ['Absorption (Extra support)', 'A + AB = A and A(A + B) = A.'],
+  ['De Morgan (Extra support)', "(AB)′ = A′ + B′ and (A + B)′ = A′B′."],
+  ['Double negation (Extra support)', "(A′)′ = A."],
+  ['Minterm', 'A product term that is 1 for exactly one input combination. m6 for ABC means 110.'],
+  ['Maxterm', 'A sum term that is 0 for exactly one input combination.'],
+  ['SOP', 'Sum of Products: AND terms joined by OR, e.g. A′C + AB. Group the 1s on a K-map.'],
+  ['POS', 'Product of Sums: OR terms joined by AND, e.g. (A + B)(C + D). Group the 0s on a K-map.'],
+  ['K-map', 'Karnaugh map: a truth table rearranged so neighbouring cells differ by one bit, making simplification visual.'],
+  ['Gray code', 'A sequence where only one bit changes per step: 00, 01, 11, 10.'],
+  ['Adjacent cells', 'K-map cells that differ in exactly one input bit (including across the edges).'],
+  ['Wraparound', 'The first and last columns (and, in 4-variable maps, first and last rows) are neighbours.'],
+  ['Group', 'A rectangle of 1, 2, 4, 8 or 16 cells of 1s that becomes one product term.'],
+  ['Overlap', 'A cell can belong to more than one group.'],
+  ['Combinational circuit', 'A circuit whose output depends only on the current inputs.'],
+  ['Sequential circuit', 'A circuit whose output also depends on stored past state.']
+];
+
+/* ===== LEARN CONTENT (static, trusted HTML) ===== */
+const tbl = (head, rows, cls) => '<div class="tablewrap"><table class="' + (cls || 'data') + '"><thead><tr>' + head.map(x => '<th scope="col">' + x + '</th>').join('') + '</tr></thead><tbody>' +
+  rows.map(r => '<tr>' + r.map((c, i) => (i === 0 && cls === 'rowh' ? '<th scope="row">' : '<td>') + c + (i === 0 && cls === 'rowh' ? '</th>' : '</td>')).join('') + '</tr>').join('') + '</tbody></table></div>';
+const box = (kind, title, body) => '<div class="callout ' + kind + '"><strong>' + title + '</strong><div>' + body + '</div></div>';
+const ttGen = (vars, cols) => {
+  const n = vars.length, rows = [];
+  for (let m = 0; m < (1 << n); m++) { const e = envFor(m, vars); rows.push(vars.split('').map(v => e[v]).concat(cols.map(c => truthOf(c[1], vars)[m]))); }
+  return tbl(vars.split('').concat(cols.map(c => c[0])), rows);
+};
+const kmTable = (title, head, rows) => tbl([title].concat(head), rows, 'rowh');
+
+const LEARN = [
+  {
+    id: 'basics', title: '1. Binary values and notation', html:
+      '<p>Digital logic uses two values: <strong>0 = FALSE / LOW</strong> and <strong>1 = TRUE / HIGH</strong>. LOW and HIGH are voltage <em>ranges</em>; the exact voltages depend on the hardware.</p>' +
+      '<p>A <strong>logic gate</strong> applies a rule to inputs and produces a binary output. <strong>Boolean algebra</strong> is the mathematics of those rules. A <strong>truth table</strong> lists the output for every input combination. A <strong>K-map</strong> rearranges a truth table so patterns are easier to group and simplify.</p>' +
+      tbl(['Notation', 'Meaning', 'Example'], [['AB, A·B, A ∧ B', 'AND', 'Both A and B must be 1'], ['A + B, A ∨ B', 'OR', 'At least one must be 1'], ["A′, ¬A, bar over A", 'NOT', 'Reverse A'], ['A ⊕ B', 'XOR', 'For two inputs, different = 1']]) +
+      box('warn', 'Boolean + is not ordinary addition', '<p>In Boolean algebra 1 + 1 = 1, because OR only asks whether at least one input is true.</p>') +
+      '<p>With <em>n</em> inputs a complete truth table has <strong>2ⁿ rows</strong>: two inputs = 4 rows, three = 8, four = 16.</p>' +
+      box('tip', 'Use prime notation', '<p>This reviewer writes complements with a prime: A′ (typed as A\'). The slides also use ¬A or a bar; they mean the same thing.</p>')
+  },
+  {
+    id: 'gates', title: '2. Logic gates', html:
+      tbl(['Gate', 'Expression', 'Rule', 'Memory cue', 'Symbol'], [
+        ['AND', 'AB', '1 only when both inputs are 1', 'Both', 'D-shaped'],
+        ['OR', 'A + B', '1 when at least one input is 1', 'At least one', 'Curved input edge, pointed output'],
+        ['NOT', 'A′', 'Reverses one input', 'Opposite', 'Triangle with output bubble'],
+        ['NAND', '(AB)′', 'Opposite of AND', 'Both 1 → 0', 'AND with output bubble'],
+        ['NOR', '(A + B)′', 'Opposite of OR', 'Both 0 → 1', 'OR with output bubble'],
+        ['XOR', 'A ⊕ B', '1 when two inputs differ', 'Different', 'OR with extra input-side curve'],
+        ['XNOR', '(A ⊕ B)′', '1 when two inputs match', 'Same', 'XOR with output bubble']]) +
+      '<p>A small <strong>bubble means inversion</strong>. NOT has one input; the other gates here use two.</p>' +
+      '<h4>Complete two-input truth table</h4>' +
+      ttGen('AB', [['AND', 'AB'], ['OR', 'A+B'], ['NAND', "(AB)'"], ['NOR', "(A+B)'"], ['XOR', 'A^B'], ['XNOR', "(A^B)'"]]) +
+      '<h4>NOT</h4>' + ttGen('A', [["A′", "A'"]]) +
+      box('warn', 'Source correction: universal gates', '<p><strong>NAND and NOR</strong> are the universal gates: each one alone can build all Boolean functions. The slides place XOR and XNOR under a “Universal Logic Gates” heading, but XOR and XNOR are special gates, <em>not</em> universal by themselves.</p>') +
+      box('tip', 'Extra support: gates from NAND/NOR', "<p>Tie both NAND inputs together: (A·A)′ = A′, so you get NOT. Tie both NOR inputs together: (A + A)′ = A′, also NOT.</p>") +
+      '<p><strong>More than two inputs:</strong> XOR means an odd number of inputs are 1. “Exactly one” is only the two-input shortcut.</p>' +
+      box('warn', 'Common mistakes', '<ul><li>Drawing NOT with two inputs.</li><li>Forgetting that XOR gives 0 for 11 while OR gives 1.</li><li>Ignoring the output bubble.</li><li>Calling XOR/XNOR universal.</li></ul>')
+  },
+  {
+    id: 'boolean', title: '3. Boolean algebra and truth tables', html:
+      '<p>George Boole developed Boolean algebra. <strong>1815–1864 are his lifespan</strong>, not a precise date when the algebra was introduced. He introduced the operations AND, OR and NOT and the idea of binary variables.</p>' +
+      '<p>The <strong>goal of simplification</strong> is to keep the <em>same output for every input combination</em> while using fewer operations or literals. A <strong>literal</strong> is a variable or its complement (A or A′). Simpler expressions usually need fewer gates and connections.</p>' +
+      '<h4>Order of operations</h4><p><strong>Parentheses → NOT → AND → OR.</strong> In F = A + B·C′: reverse C first, then AND with B, then OR with A. A bar over a whole expression means: evaluate inside first, then invert.</p>' +
+      '<h4>Worked truth table: F = A + B·C′</h4>' + ttGen('ABC', [["C′", "C'"], ["B·C′", "BC'"], ["F = A + BC′", "A+BC'"]]) +
+      '<p>Example row: A=0, B=1, C=0 → C′=1 → BC′=1 → F = 0 + 1 = 1.</p>' +
+      '<h4>Where Boolean algebra is used</h4><ul><li><strong>Digital circuits:</strong> combinational and sequential circuits.</li><li><strong>Programming:</strong> if-else conditions and loop conditions.</li><li><strong>Sets:</strong> intersection (AND), union (OR), complement (NOT).</li><li><strong>Search engines:</strong> AND/OR/NOT queries.</li></ul>'
+  },
+  {
+    id: 'laws', title: '4. Boolean laws and simplification', html:
+      tbl(['Law', 'OR form', 'AND form', 'Simple meaning'], [
+        ['Identity', 'A + 0 = A', 'A·1 = A', 'Leaves A unchanged'],
+        ['Null / dominance', 'A + 1 = 1', 'A·0 = 0', 'A constant controls the output'],
+        ['Idempotent', 'A + A = A', 'AA = A', 'Repeating A changes nothing'],
+        ['Complement', "A + A′ = 1", "AA′ = 0", 'A and its opposite'],
+        ['Commutative', 'A + B = B + A', 'AB = BA', 'Swap the order'],
+        ['Associative', '(A + B) + C = A + (B + C)', '(AB)C = A(BC)', 'Regroup the same operation'],
+        ['Distributive', 'A + BC = (A + B)(A + C)', 'A(B + C) = AB + AC', 'Expand or factor']]) +
+      box('warn', 'Source correction: distributive law', '<p>The slide example <code>a(b*c) = (ab)*(ac)</code> and the numbers 2, 3, 4 are not a valid general distributive identity. Learn the two Boolean forms: <strong>A + BC = (A + B)(A + C)</strong> and <strong>A(B + C) = AB + AC</strong>. The first form does <em>not</em> hold for ordinary numbers.</p>') +
+      box('tip', 'Extra support: useful simplification laws', "<ul><li>Double negation: (A′)′ = A.</li><li>Absorption: A + AB = A; A(A + B) = A.</li><li>De Morgan: (AB)′ = A′ + B′; (A + B)′ = A′B′. Complement each input and swap AND with OR.</li></ul>") +
+      '<h4>Worked simplifications</h4>' +
+      '<p><strong>A + AB</strong><br>A + AB = A(1 + B) (factor) → 1 + B = 1 (null law) → A·1 = A (identity).</p>' +
+      "<p><strong>AB + AB′</strong><br>= A(B + B′) (factor) → B + B′ = 1 (complement) → A·1 = A.</p>" +
+      "<p><strong>(A + B)(A + B′)</strong><br>= A + BB′ (distributive law in reverse) → BB′ = 0 (complement) → A + 0 = A.</p>" +
+      '<p>A valid simplification must match the original on <strong>all rows</strong>, not just one example input.</p>'
+  },
+  {
+    id: 'kmap', title: '5. Karnaugh maps', html:
+      '<p>A <strong>K-map</strong> is a visual truth table. Each cell is one input combination. Adjacent cells differ in only one bit. Grouping lets you remove variables that change and keep variables that stay fixed.</p>' +
+      tbl(['Variables', 'Cells', 'Layout'], [['2', '4', '2×2'], ['3', '8', '2×4'], ['4', '16', '4×4'], ['5', '32', 'Two related 4×4 maps']]) +
+      box('warn', 'Gray code order: 00, 01, 11, 10', '<p>Never label K-map axes 00, 01, 10, 11. Gray code changes one bit at each step, so neighbours are truly adjacent. The first and last columns are neighbours too (wraparound); in a 4-variable map the first and last rows are neighbours. Diagonal cells are never adjacent.</p>') +
+      '<h4>Minterm numbering (Extra support)</h4><p>A is the most significant bit. For ABC, binary 101 = decimal 5 = m5. F = Σm(1,3,6,7) means F is 1 for those combinations and 0 for the others (no don’t-cares).</p>' +
+      kmTable('A \\ BC', ['00', '01', '11', '10'], [['0', 'm0', 'm1', 'm3', 'm2'], ['1', 'm4', 'm5', 'm7', 'm6']]) +
+      kmTable('AB \\ CD', ['00', '01', '11', '10'], [['00', 'm0', 'm1', 'm3', 'm2'], ['01', 'm4', 'm5', 'm7', 'm6'], ['11', 'm12', 'm13', 'm15', 'm14'], ['10', 'm8', 'm9', 'm11', 'm10']]) +
+      '<h4>SOP and POS</h4><ul><li><strong>SOP (Sum of Products):</strong> OR of AND terms, e.g. A′C + AB. Group the <strong>1s</strong>. This is the main focus.</li><li><strong>POS (Product of Sums):</strong> AND of OR terms. Group the <strong>0s</strong>.</li></ul>' +
+      '<h4>Grouping rules</h4><ol><li>Group sizes: 1, 2, 4, 8 or 16 cells (powers of two).</li><li>Groups are rectangles or squares, including wraparound rectangles.</li><li>No diagonal, L-shaped, or 3- or 6-cell groups.</li><li>For SOP include only 1s.</li><li>Choose the largest useful groups, then make sure every 1 is covered. Avoid unnecessary redundant groups.</li><li>Overlap is allowed.</li><li>Opposite edges connect. The four corners of a 4-variable map can form one group.</li></ol>' +
+      '<h4>How to write a term (SOP)</h4><ul><li>Variable stays <strong>1</strong> → write it normally (A).</li><li>Variable stays <strong>0</strong> → write its complement (A′).</li><li>Variable changes → remove it.</li><li>AND the remaining literals; OR the terms from all groups.</li></ul>' +
+      '<p>A group of 2ᵏ cells removes k variables. In a 3-variable map a group of 4 leaves one literal.</p>' +
+      box('tip', 'Extra support: POS polarity', '<p>For a group of 0s the polarity reverses: a variable fixed at 0 is written normally, fixed at 1 is complemented. OR the literals inside a group; AND the group terms.</p>') +
+      '<h4>Six-step workflow</h4><p><strong>Read → Draw → Fill → Group → Write → Verify.</strong> Identify inputs and minterms; use Gray code; fill cells; make useful large groups; keep fixed variables; compare against the original truth table.</p>' +
+      box('warn', 'Common errors', '<ul><li>Binary instead of Gray-code headings.</li><li>Diagonal, L-shaped or 3-cell groups.</li><li>Missing wraparound.</li><li>Stopping at small groups before looking for a larger one.</li></ul>') +
+      '<p>For 5 variables use two 4×4 maps (A = 0 and A = 1). Cells in the same position in both maps are adjacent. See the Visual Lab.</p>'
+  },
+  {
+    id: 'examples', title: '6. Worked K-map examples', html:
+      '<p>Open each one in the Visual Lab K-map tutor to try the groups yourself.</p>' +
+      '<h4>Example 1: F(A,B) = Σm(1,2,3)</h4>' + kmTable('A \\ B', ['0', '1'], [['0', '0', '1'], ['1', '1', '1']]) +
+      '<p>Pair m1,m3: B stays 1 → B. Pair m2,m3: A stays 1 → A. m3 is used twice. <strong>F = A + B.</strong> Three 1s cannot form one three-cell group.</p>' +
+      '<h4>Example 2: F(A,B,C) = Σm(1,3,6,7)</h4>' + kmTable('A \\ BC', ['00', '01', '11', '10'], [['0', '0', '1', '1', '0'], ['1', '0', '0', '1', '1']]) +
+      "<p>m1+m3: A=0 and C=1 stay → A′C. m6+m7: A=1 and B=1 stay → AB. <strong>F = A′C + AB.</strong> (m3,m7 are also adjacent, but their term BC is unnecessary because all 1s are already covered.)</p>" +
+      '<h4>Example 3: F(A,B,C,D) = Σm(0,1,2,3,12,13,14,15)</h4>' + kmTable('AB \\ CD', ['00', '01', '11', '10'], [['00', '1', '1', '1', '1'], ['01', '0', '0', '0', '0'], ['11', '1', '1', '1', '1'], ['10', '0', '0', '0', '0']]) +
+      "<p>First row: A=0, B=0 → A′B′. Third row: A=1, B=1 → AB. <strong>F = A′B′ + AB</strong>, which is A XNOR B. The two rows are not adjacent, so they cannot form a group of eight.</p>" +
+      '<h4>Example 4 (wraparound): F(A,B,C) = Σm(0,2,4,6)</h4>' + kmTable('A \\ BC', ['00', '01', '11', '10'], [['0', '1', '0', '0', '1'], ['1', '1', '0', '0', '1']]) +
+      "<p>The first and last columns connect. All four 1s form one group. A and B change; C stays 0. <strong>F = C′.</strong> Verify: 000, 010, 100, 110 all have C=0 so C′=1; every other combination has C=1.</p>" +
+      '<h4>Practice from the slides</h4><p>F(A,B,C) = Σm(0,2,4,6) → F = C′ (Example 4).</p>'
+  },
+  {
+    id: 'everyday', title: '7. Everyday logic', html:
+      '<p>Logic appears in writing, speaking, search engines, mathematics and programs.</p>' +
+      '<ul><li><strong>Searching:</strong> searching “disc golf” returns pages about either word. Search <em>disc AND golf</em> to require both.</li>' +
+      '<li><strong>At home:</strong> “ice cream <em>or</em> cake” in conversation often means XOR (exactly one). Eating both fits OR but not XOR.</li>' +
+      '<li><strong>In school:</strong> “A on any two tests, <em>or</em> an A on at least one and no fails.” Because of the OR, the minimum is two As and a fail, or one A and two Ds (not fails).</li>' +
+      '<li><strong>In programming:</strong> <code>if (x &gt; 0 AND x &lt;= 10) x++;</code> is true only when both comparisons are true.</li>' +
+      '<li><strong>Sets:</strong> AND = intersection, OR = union, NOT = complement.</li></ul>'
+  },
+  {
+    id: 'remind', title: '8. Exam reminders', html:
+      '<ul class="tight"><li>AND = both; OR = at least one; XOR = different; XNOR = same.</li><li>NAND and NOR are the universal gates.</li><li>An output bubble reverses the gate result.</li><li>Boolean 1 + 1 = 1.</li><li>Parentheses → NOT → AND → OR.</li><li>Gray code = 00, 01, 11, 10.</li><li>SOP groups 1s; POS groups 0s.</li><li>Group sizes are powers of two; diagonal and L-shaped groups are invalid.</li><li>Check edges and overlap before accepting small groups.</li><li>Fixed variables stay; changing variables disappear.</li><li>Check the simplified expression on every input combination.</li></ul>' +
+      '<p><strong>Study order:</strong> learn the gate rules, practise truth tables, learn Boolean laws, then practise K-map placement and grouping. Explain each answer aloud instead of memorising only the final result.</p>' +
+      box('tip', 'Honest note', '<p>This reviewer is built from your slides. It does not know your lecturer’s exact exam, so use it to build understanding, not to predict a grade.</p>')
+  }
+];
+
+/* ===== APP: helpers, storage, shared widgets ===== */
+const $ = (s, r) => (r || document).querySelector(s);
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in (props || {})) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, '');
+    else e.setAttribute(k, v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return e;
+}
+const pr = s => String(s).replace(/'/g, '′');          // display primes
+const plain = s => String(s).replace(/′/g, "'");
+let announceEl = null;
+function announce(t) { if (announceEl) { announceEl.textContent = ''; setTimeout(() => { announceEl.textContent = t; }, 30); } }
+
+/* ---- storage with graceful fallback ---- */
+const KEY = 'coa-logic-reviewer-v1';
+let storageOK = true;
+const blankP = () => ({ theme: null, stats: {}, missed: [], history: [] });
+let P = blankP();
+(function loadP() {
+  try { const r = localStorage.getItem(KEY); if (r) P = Object.assign(blankP(), JSON.parse(r)); }
+  catch (e) { storageOK = false; }
+})();
+function saveP() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) { storageOK = false; } }
+function record(q, correct) {
+  const s = P.stats[q.id] || { a: 0, c: 0 };
+  s.a++; if (correct) s.c++; s.last = correct ? 1 : 0; P.stats[q.id] = s;
+  if (!correct && !P.missed.includes(q.id)) P.missed.push(q.id);
+  saveP();
+}
+function clearMissed(id) { P.missed = P.missed.filter(x => x !== id); saveP(); }
+
+/* ---- question helpers ---- */
+const qById = id => Q.find(q => q.id === id);
+function prep(q) {   // instance: shuffled choices keep original index as identity
+  const inst = { q };
+  if (q.type === 'mc') inst.choices = shuffle(q.choices.map((t, i) => ({ i, t })));
+  return inst;
+}
+function isAnswered(q, a) {
+  if (q.type === 'mc') return a != null;
+  if (q.type === 'tt') return !!a && a.some(x => x != null);
+  return a != null;
+}
+function isCorrect(q, a) {
+  if (!isAnswered(q, a)) return false;
+  if (q.type === 'mc') return a === q.correct;
+  if (q.type === 'tt') return a.length === q.correct.length && a.every((x, i) => x === q.correct[i]);
+  const want = [...q.mins].sort((x, y) => x - y), got = [...a].sort((x, y) => x - y);
+  return want.length === got.length && want.every((x, i) => x === got[i]);
+}
+function showAnswerText(q) {
+  if (q.type === 'mc') return pr(q.choices[q.correct]);
+  if (q.type === 'tt') return q.correct.join(', ') + ' (rows in order)';
+  return 'Σm(' + q.mins.join(',') + ')';
+}
+function userAnswerText(q, a) {
+  if (!isAnswered(q, a)) return 'No answer';
+  if (q.type === 'mc') return pr(q.choices[a]);
+  if (q.type === 'tt') return a.map(x => x == null ? '–' : x).join(', ');
+  return a.length ? 'Σm(' + [...a].sort((x, y) => x - y).join(',') + ')' : 'All cells 0';
+}
+
+/* ---- focus-preserving rerender ---- */
+function keepFocus(fn) {
+  const k = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-fk');
+  fn();
+  if (k) { const el = document.querySelector('[data-fk="' + k + '"]'); if (el) el.focus(); }
+}
+
+/* ---- gate SVG ---- */
+const baseOf = t => ({ AND: 'AND', NAND: 'AND', OR: 'OR', NOR: 'OR', XOR: 'OR', XNOR: 'OR', NOT: 'NOT' })[t];
+const hasBubble = t => ['NAND', 'NOR', 'XNOR', 'NOT'].includes(t);
+const tipOf = t => ({ AND: 60, OR: 62, NOT: 56 })[baseOf(t)];
+function bodySVG(t) {
+  const b = baseOf(t); let s = '';
+  if (b === 'AND') s += '<path class="gbody" d="M0 0H30A30 30 0 0 1 30 60H0Z"/>';
+  if (b === 'OR') s += '<path class="gbody" d="M0 0Q35 0 62 30Q35 60 0 60Q16 30 0 0Z"/>';
+  if (b === 'NOT') s += '<path class="gbody" d="M0 0L56 30L0 60Z"/>';
+  if (t === 'XOR' || t === 'XNOR') s += '<path class="gline" d="M-8 0Q8 30 -8 60"/>';
+  if (hasBubble(t)) s += '<circle class="gbody" cx="' + (tipOf(t) + 5) + '" cy="30" r="5"/>';
+  return s;
+}
+const wc = v => v ? 'wire hi' : 'wire lo';
+function gateSVG(t, A, B, Y) {
+  const two = t !== 'NOT', b = baseOf(t), tip = tipOf(t) + (hasBubble(t) ? 10 : 0);
+  const inEnd = b === 'OR' ? 6 : 0;
+  let s = '<svg class="logic" viewBox="-70 -10 200 80" role="img" aria-label="' + t + ' gate, ' + (two ? 'A=' + A + ', B=' + B : 'A=' + A) + ', output Y=' + Y + '">';
+  if (two) {
+    s += '<line class="' + wc(A) + '" x1="-25" y1="15" x2="' + inEnd + '" y2="15"/><line class="' + wc(B) + '" x1="-25" y1="45" x2="' + inEnd + '" y2="45"/>';
+    s += '<text x="-30" y="19" text-anchor="end">A = ' + A + '</text><text x="-30" y="49" text-anchor="end">B = ' + B + '</text>';
+  } else {
+    s += '<line class="' + wc(A) + '" x1="-25" y1="30" x2="0" y2="30"/><text x="-30" y="34" text-anchor="end">A = ' + A + '</text>';
+  }
+  s += '<line class="' + wc(Y) + '" x1="' + tip + '" y1="30" x2="92" y2="30"/><text x="96" y="34">Y = ' + Y + '</text>';
+  s += '<g>' + bodySVG(t) + '</g></svg>';
+  return s;
+}
+
+/* ---- truth table builder ---- */
+function ttElement(vars, outCols, rows, curRow) {
+  return h('div', { class: 'tablewrap' }, h('table', { class: 'tt' },
+    h('thead', null, h('tr', null, vars.split('').map(v => h('th', { scope: 'col' }, v)), outCols.map(c => h('th', { scope: 'col' }, pr(c))))),
+    h('tbody', null, rows.map((r, i) => h('tr', { class: i === curRow ? 'cur' : '' }, r.map(c => h('td', null, c)), i === curRow ? h('td', { class: 'sr' }, '(current row)') : null)))));
+}
+
+/* ---- K-map grid widget ---- */
+const GCLS = ['g0', 'g1', 'g2', 'g3', 'g4', 'g5'];
+function kmapGrid(n, o) {
+  const L = kLayout(n);
+  const head = h('tr', null, h('th', { class: 'corner', scope: 'col' }, L.rv + ' \\ ' + L.cv), L.cols.map(c => h('th', { scope: 'col' }, toBin(c, L.cb))));
+  const body = L.rows.map((rv, r) => h('tr', null, h('th', { scope: 'row' }, toBin(rv, L.rb)),
+    L.cols.map((cv, c) => {
+      const m = cellMinterm(L, r, c), v = o.val(m);
+      const extra = o.cls ? o.cls(m) : '';
+      const badge = o.badge ? o.badge(m) : '';
+      return h('td', null, h('button', {
+        type: 'button', class: 'kcell ' + (v ? 'one ' : '') + extra + (o.sel && o.sel(m) ? ' sel' : ''),
+        'data-fk': (o.id || 'k') + '-' + m, 'data-m': m, disabled: o.disabled,
+        'aria-pressed': o.pressed ? String(!!o.pressed(m)) : null,
+        'aria-label': 'm' + m + ', ' + mintermDesc(m, n) + ', value ' + v + (badge ? ', in ' + badge : '') + (o.sel && o.sel(m) ? ', selected' : ''),
+        onclick: () => o.onCell && o.onCell(m)
+      }, h('span', { class: 'kv' }, v), h('span', { class: 'km' }, 'm' + m), badge ? h('span', { class: 'kb' }, badge) : null));
+    })));
+  return h('div', { class: 'tablewrap' }, h('table', { class: 'kmap', role: 'group', 'aria-label': n + '-variable Karnaugh map, A is the most significant bit' }, h('thead', null, head), h('tbody', null, body)));
+}
+
+/* ---- question card ---- */
+function questionCard(inst, o) {
+  const q = inst.q, a = o.answer, fb = !!o.feedback, locked = !!o.locked;
+  const card = h('div', { class: 'card' });
+  card.append(h('div', null, h('span', { class: 'tag' }, TOPICS[q.topic]), h('span', { class: 'tag' }, DIFF[q.diff]), h('span', { class: 'tag' }, q.type === 'mc' ? 'Multiple choice' : q.type === 'tt' ? 'Truth table' : 'K-map placement')));
+  card.append(h('h3', { id: 'qtext' }, pr(q.q)));
+  if (q.type === 'mc') {
+    const g = h('div', { role: 'radiogroup', 'aria-labelledby': 'qtext' });
+    inst.choices.forEach(ch => {
+      let cls = 'choice', tagt = '';
+      if (fb) { if (ch.i === q.correct) { cls += ' right'; tagt = ' ✔ Correct answer'; } else if (ch.i === a) { cls += ' wrong'; tagt = ' ✘ Your answer'; } }
+      g.append(h('button', { type: 'button', role: 'radio', class: cls, 'aria-checked': String(a === ch.i), 'data-fk': 'ch-' + ch.i, disabled: locked || (fb && o.lockOnFeedback),
+        onclick: () => o.onAnswer(ch.i) }, pr(ch.t) + tagt));
+    });
+    card.append(g);
+  } else if (q.type === 'tt') {
+    const cur = a || q.correct.map(() => null);
+    const rows = q.correct.map((_, m) => {
+      const e = envFor(m, q.vars), sel = h('select', { 'aria-label': 'Output ' + q.out + ' when ' + q.vars.split('').map(v => v + '=' + e[v]).join(', '), 'data-fk': 'tt-' + m, disabled: locked || (fb && o.lockOnFeedback),
+        onchange: ev => { const n = cur.slice(); n[m] = ev.target.value === '' ? null : +ev.target.value; o.onAnswer(n); } },
+        h('option', { value: '' }, '–'), h('option', { value: '0', selected: cur[m] === 0 }, '0'), h('option', { value: '1', selected: cur[m] === 1 }, '1'));
+      const good = cur[m] === q.correct[m];
+      return h('tr', null, q.vars.split('').map(v => h('td', null, e[v])), h('td', null, sel), fb ? h('td', null, good ? '✔ correct' : '✘ should be ' + q.correct[m]) : null);
+    });
+    card.append(h('div', { class: 'tablewrap' }, h('table', { class: 'tt' }, h('thead', null, h('tr', null, q.vars.split('').map(v => h('th', null, v)), h('th', null, q.out), fb ? h('th', null, 'Check') : null)), h('tbody', null, rows))));
+  } else {
+    const cur = new Set(a || []);
+    card.append(kmapGrid(q.n, {
+      id: 'q', val: m => cur.has(m) ? 1 : 0, disabled: locked || (fb && o.lockOnFeedback),
+      cls: m => fb ? (cur.has(m) && q.mins.includes(m) ? 'ok' : cur.has(m) ? 'extra' : q.mins.includes(m) ? 'miss' : '') : '',
+      badge: m => fb ? (cur.has(m) && q.mins.includes(m) ? '✔' : cur.has(m) ? '✘ extra' : q.mins.includes(m) ? 'missing' : '') : '',
+      onCell: m => { cur.has(m) ? cur.delete(m) : cur.add(m); o.onAnswer([...cur].sort((x, y) => x - y)); }
+    }));
+    card.append(h('p', { class: 'muted' }, 'Click a cell to toggle it between 0 and 1. A is the most significant bit.'));
+  }
+  if (o.hint && !fb) {
+    card.append(o.hintShown ? h('div', { class: 'msg info' }, '💡 Hint: ' + (q.hint || (q.topic === 'kmap' ? 'Write the binary value of each minterm and use Gray-code headings.' : 'Test one input row at a time.'))) :
+      h('button', { type: 'button', class: 'btn small', 'data-fk': 'hint', onclick: o.hint }, 'Show hint'));
+  }
+  if (o.check && !fb && q.type !== 'mc') card.append(h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', 'data-fk': 'check', disabled: !isAnswered(q, a), onclick: o.check }, 'Check answer')));
+  if (fb) {
+    const good = isCorrect(q, a);
+    const box = h('div', { class: 'msg ' + (good ? 'ok' : 'bad'), role: 'status' },
+      h('strong', null, !isAnswered(q, a) ? '⚠ Unanswered. ' : good ? '✔ Correct. ' : '✘ Not quite. '),
+      !good ? h('span', null, 'Correct answer: ', h('strong', null, showAnswerText(q)), '. ') : null);
+    card.append(box);
+    card.append(h('p', null, h('strong', null, 'Worked explanation: '), pr(q.explain)));
+    card.append(h('p', null, h('strong', null, 'Common mistake: '), pr(q.mistake)));
+    if (o.lessonLink) card.append(h('button', { type: 'button', class: 'btn small', onclick: () => o.lessonLink(q.lesson) }, '📖 Review lesson: ' + (LEARN.find(l => l.id === q.lesson) || {}).title));
+  }
+  return card;
+}
+
+/* ===== APP: views ===== */
+const App = { view: 'learn', sec: 'basics', lab: 'gate', theme: 'light' };
+function go(view, sub) { App.view = view; if (sub) { if (view === 'learn') App.sec = sub; if (view === 'lab') App.lab = sub; } render(); window.scrollTo(0, 0); }
+function openLesson(id) { go('learn', id); }
+
+/* ---------- LEARN ---------- */
+const LS = { q: '' };
+function viewLearn() {
+  const wrap = h('div', { class: 'layout' });
+  const side = h('div', { class: 'side', role: 'navigation', 'aria-label': 'Lesson topics' });
+  LEARN.concat([{ id: 'glossary', title: '9. Glossary' }]).forEach(s => side.append(h('button', { type: 'button', class: 'btn', 'data-fk': 'sec-' + s.id, 'aria-current': App.sec === s.id ? 'page' : null, onclick: () => { App.sec = s.id; keepFocus(render); } }, s.title)));
+  const content = h('div');
+  if (App.sec === 'glossary') {
+    const list = h('div');
+    const draw = () => {
+      list.innerHTML = '';
+      const q = LS.q.trim().toLowerCase();
+      const f = GLOSSARY.filter(g => !q || g[0].toLowerCase().includes(q) || g[1].toLowerCase().includes(q));
+      if (!f.length) list.append(h('p', { class: 'muted' }, 'No matching terms.'));
+      f.forEach(g => list.append(h('p', null, h('strong', null, g[0] + ': '), pr(g[1]))));
+      count.textContent = f.length + ' of ' + GLOSSARY.length + ' terms';
+    };
+    const count = h('span', { class: 'muted', 'aria-live': 'polite' });
+    const inp = h('input', { type: 'search', id: 'gs', 'aria-label': 'Search glossary', placeholder: 'Search terms…', value: LS.q, oninput: e => { LS.q = e.target.value; draw(); } });
+    content.append(h('div', { class: 'card' }, h('h2', null, 'Glossary'), h('div', { class: 'row' }, inp, count), list));
+    draw();
+  } else {
+    const idx = LEARN.findIndex(s => s.id === App.sec), s = LEARN[idx] || LEARN[0];
+    const card = h('div', { class: 'card' }, h('h2', null, s.title), h('div', { html: s.html }));
+    card.append(h('div', { class: 'row' },
+      idx > 0 ? h('button', { type: 'button', class: 'btn', onclick: () => go('learn', LEARN[idx - 1].id) }, '← Previous') : null,
+      idx < LEARN.length - 1 ? h('button', { type: 'button', class: 'btn primary', onclick: () => go('learn', LEARN[idx + 1].id) }, 'Next →') : h('button', { type: 'button', class: 'btn primary', onclick: () => go('lab', 'gate') }, 'Go to Visual Lab →')));
+    if (s.id === 'gates') card.append(h('p', null, h('button', { type: 'button', class: 'btn small', onclick: () => go('lab', 'gate') }, '🔬 Try the Gate Explorer')));
+    if (s.id === 'laws') card.append(h('p', null, h('button', { type: 'button', class: 'btn small', onclick: () => go('lab', 'law') }, '🔬 Try the Law Explorer')));
+    if (s.id === 'kmap' || s.id === 'examples') card.append(h('p', null, h('button', { type: 'button', class: 'btn small', onclick: () => go('lab', 'kmap') }, '🔬 Open the K-map Tutor')));
+    content.append(card);
+  }
+  wrap.append(side, content);
+  return wrap;
+}
+
+/* ---------- VISUAL LAB ---------- */
+const GE = { type: 'AND', A: 0, B: 0 };
+const EW = { A: 0, B: 1, C: 0, step: 3 };
+const LW = { i: 12 };
+const KT = { n: 3, ones: new Set([1, 3, 6, 7]), groups: [], sel: new Set(), mode: 'group', msg: null, show: false };
+const F5 = { m: null };
+
+function viewLab() {
+  const subs = [['gate', 'Gate Explorer'], ['expr', 'Expression Walkthrough'], ['law', 'Boolean Laws'], ['kmap', 'K-map Tutor'], ['five', '5-Variable Extension']];
+  const nav = h('div', { class: 'row', role: 'group', 'aria-label': 'Visual Lab demos' }, subs.map(s => h('button', { type: 'button', class: 'btn', 'data-fk': 'lab-' + s[0], 'aria-current': App.lab === s[0] ? 'page' : null, onclick: () => { App.lab = s[0]; keepFocus(render); } }, s[1])));
+  const body = { gate: labGate, expr: labExpr, law: labLaw, kmap: labKmap, five: labFive }[App.lab]();
+  return h('div', null, h('div', { class: 'card' }, h('h2', null, 'Visual Lab'), h('p', { class: 'muted' }, 'Interactive demonstrations. Every result is computed live from the real truth tables.'), nav), body);
+}
+
+function labGate() {
+  const t = GE.type, two = t !== 'NOT', A = GE.A, B = two ? GE.B : 0, Y = two ? GATE_FN[t](A, B) : GATE_FN[t](A);
+  const exprs = { AND: 'Y = A · B', OR: 'Y = A + B', NOT: 'Y = A′', NAND: 'Y = (A · B)′', NOR: 'Y = (A + B)′', XOR: 'Y = A ⊕ B', XNOR: 'Y = (A ⊕ B)′' };
+  const rules = { AND: 'Output 1 only when both inputs are 1.', OR: 'Output 1 when at least one input is 1.', NOT: 'Output is the opposite of the input.', NAND: 'Opposite of AND: output 0 only when both inputs are 1.', NOR: 'Opposite of OR: output 1 only when both inputs are 0.', XOR: 'Output 1 when the two inputs are different.', XNOR: 'Output 1 when the two inputs are the same.' };
+  const rows = []; const nIn = two ? 4 : 2;
+  for (let m = 0; m < nIn; m++) { const a = two ? m >> 1 : m, b = m & 1; rows.push(two ? [a, b, GATE_FN[t](a, b)] : [a, GATE_FN[t](a)]); }
+  const curRow = two ? (A << 1) | B : A;
+  const card = h('div', { class: 'card' });
+  card.append(h('div', { class: 'row', role: 'group', 'aria-label': 'Choose a gate' }, Object.keys(exprs).map(g => h('button', { type: 'button', class: 'btn', 'data-fk': 'g-' + g, 'aria-pressed': String(g === t), onclick: () => { GE.type = g; keepFocus(render); } }, g))));
+  const g2 = h('div', { class: 'grid2' });
+  const left = h('div');
+  left.append(h('div', { html: gateSVG(t, A, B, Y) }));
+  left.append(h('div', { class: 'row' },
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'tA', 'aria-pressed': String(!!A), onclick: () => { GE.A ^= 1; keepFocus(render); } }, 'Input A = ' + A + ' (click to toggle)'),
+    two ? h('button', { type: 'button', class: 'btn', 'data-fk': 'tB', 'aria-pressed': String(!!B), onclick: () => { GE.B ^= 1; keepFocus(render); } }, 'Input B = ' + B + ' (click to toggle)') : null));
+  left.append(h('p', null, h('span', { class: 'led' + (Y ? ' on' : ''), role: 'status' }, h('i'), 'Output Y = ' + Y + (Y ? ' (HIGH)' : ' (LOW)'))));
+  const right = h('div');
+  right.append(h('p', null, h('span', { class: 'expr' }, exprs[t])), h('p', null, h('strong', null, 'Rule: '), rules[t]));
+  right.append(ttElement(two ? 'AB' : 'A', ['Y'], rows, curRow));
+  right.append(h('p', { class: 'muted' }, 'The highlighted row is the current input. Solid green wire = 1 (HIGH); dashed gray wire = 0 (LOW).'));
+  if (t === 'NAND' || t === 'NOR') right.append(h('div', { class: 'msg info' }, 'Universal gate. Tie both inputs together and it becomes NOT: toggle A to see Y = A′ when A = B.'));
+  if (t === 'XOR' || t === 'XNOR') right.append(h('div', { class: 'msg info' }, 'Special gate (not universal on its own). With more than two inputs, XOR means an odd number of 1s.'));
+  g2.append(left, right); card.append(g2);
+  return card;
+}
+
+function circuitSVG(A, B, C, step) {
+  const nc = C ^ 1, bc = B & nc, F = A | bc;
+  const known = [true, step >= 1, step >= 2, step >= 3];
+  const cls = (v, k) => k ? wc(v) : 'wire unk';
+  const lab = (x, y, t, k) => '<text x="' + x + '" y="' + y + '">' + t + '</text>';
+  let s = '<svg class="logic" style="max-width:640px" viewBox="0 0 540 210" role="img" aria-label="Circuit for F = A + B AND NOT C">';
+  s += '<polyline class="' + wc(A) + '" points="12,55 346,55"/><polyline class="' + wc(B) + '" points="12,115 200,115"/><polyline class="' + wc(C) + '" points="12,170 60,170"/>';
+  s += '<polyline class="' + cls(nc, known[1]) + '" points="126,170 160,170 160,145 200,145"/>';
+  s += '<polyline class="' + cls(bc, known[2]) + '" points="260,130 300,130 300,85 346,85"/>';
+  s += '<polyline class="' + cls(F, known[3]) + '" points="402,70 470,70"/>';
+  s += '<g transform="translate(60,140)">' + bodySVG('NOT') + '</g><g transform="translate(200,100)">' + bodySVG('AND') + '</g><g transform="translate(340,40)">' + bodySVG('OR') + '</g>';
+  s += lab(12, 46, 'A = ' + A) + lab(12, 106, 'B = ' + B) + lab(12, 161, 'C = ' + C);
+  s += lab(128, 188, '① C′ = ' + (known[1] ? nc : '?')) + lab(214, 90, '② B·C′ = ' + (known[2] ? bc : '?')) + lab(380, 34, '③ F = ' + (known[3] ? F : '?'));
+  s += lab(474, 74, 'F = ' + (known[3] ? F : '?')) + '</svg>';
+  return s;
+}
+function labExpr() {
+  const { A, B, C, step } = EW, nc = C ^ 1, bc = B & nc, F = A | bc;
+  const card = h('div', { class: 'card' });
+  card.append(h('h3', null, 'F = A + B·C′'), h('p', { class: 'muted' }, 'Order of evaluation: ① NOT → ② AND → ③ OR. Use the step buttons to reveal each value.'));
+  card.append(h('div', { class: 'row' }, ['A', 'B', 'C'].map(v => h('button', { type: 'button', class: 'btn', 'data-fk': 'e-' + v, 'aria-pressed': String(!!EW[v]), onclick: () => { EW[v] ^= 1; keepFocus(render); } }, v + ' = ' + EW[v]))));
+  card.append(h('div', { html: circuitSVG(A, B, C, step) }));
+  card.append(h('div', { class: 'row' },
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'e-prev', disabled: step <= 0, onclick: () => { EW.step--; keepFocus(render); } }, '← Back'),
+    h('button', { type: 'button', class: 'btn primary', 'data-fk': 'e-next', disabled: step >= 3, onclick: () => { EW.step++; keepFocus(render); } }, 'Next step →'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'e-all', onclick: () => { EW.step = 3; keepFocus(render); } }, 'Show all'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'e-reset', onclick: () => { EW.step = 0; keepFocus(render); } }, 'Hide results')));
+  const lines = ['Inputs: A = ' + A + ', B = ' + B + ', C = ' + C,
+    step >= 1 ? '① NOT: C′ = ' + nc : null,
+    step >= 2 ? '② AND: B · C′ = ' + B + ' · ' + nc + ' = ' + bc : null,
+    step >= 3 ? '③ OR: F = A + (B·C′) = ' + A + ' + ' + bc + ' = ' + F : null].filter(Boolean);
+  card.append(h('div', { class: 'msg info', role: 'status' }, lines.map(l => h('div', null, l))));
+  const rows = []; for (let m = 0; m < 8; m++) { const e = envFor(m, 'ABC'), c1 = e.C ^ 1, b1 = e.B & c1; rows.push([e.A, e.B, e.C, c1, b1, e.A | b1]); }
+  card.append(ttElement('ABC', ["C′", "B·C′", 'F'], rows, (A << 2) | (B << 1) | C));
+  return card;
+}
+
+function labLaw() {
+  const law = LAWS[LW.i], vars = sortedVars(law.l, law.r), n = vars.length;
+  const card = h('div', { class: 'card' });
+  const sel = h('select', { 'aria-label': 'Choose a Boolean law', 'data-fk': 'law-sel', onchange: e => { LW.i = +e.target.value; keepFocus(render); } }, LAWS.map((l, i) => h('option', { value: i, selected: i === LW.i }, l.name)));
+  card.append(h('h3', null, 'Compare both sides of a law'), h('div', { class: 'row' }, sel));
+  if (law.extra) card.append(h('div', { class: 'msg info' }, 'Extra support: this law is useful, but it is not listed as a separate law in your slides.'));
+  card.append(h('p', null, h('span', { class: 'expr' }, pr(law.l) + '  =  ' + pr(law.r))));
+  const rows = []; let all = true;
+  const tl = truthOf(law.l, vars), tr = truthOf(law.r, vars);
+  for (let m = 0; m < (1 << n); m++) { const e = envFor(m, vars); const eq = tl[m] === tr[m]; if (!eq) all = false; rows.push(vars.split('').map(v => e[v]).concat([tl[m], tr[m], eq ? '✔ same' : '✘ different'])); }
+  card.append(ttElement(vars, [law.l, law.r, 'Match?'], rows, -1));
+  card.append(h('div', { class: 'msg ' + (all ? 'ok' : 'bad'), role: 'status' }, all ? '✔ Both sides give the same output on all ' + (1 << n) + ' input combinations.' : '✘ The sides differ on at least one row.'));
+  card.append(h('p', null, h('strong', null, 'Why: '), law.why));
+  if (law.name.startsWith('Distributive (OR')) card.append(h('div', { class: 'msg info' }, 'Source correction: this OR-over-AND form is true in Boolean algebra but not for ordinary numbers, so the slide’s 2, 3, 4 example does not show it. The slide’s a(b·c) = (ab)(ac) is not a valid distributive law.'));
+  return card;
+}
+
+/* ----- K-map tutor ----- */
+function ktSetN(n) { KT.n = n; KT.ones = new Set(); KT.groups = []; KT.sel = new Set(); KT.msg = null; KT.show = false; }
+function ktLoad(p) { KT.n = p.n; KT.ones = new Set(p.mins); KT.groups = []; KT.sel = new Set(); KT.msg = null; KT.show = false; }
+function ktGroupOf(m) { return KT.groups.map((g, i) => g.cells.includes(m) ? i : -1).filter(i => i >= 0); }
+function labKmap() {
+  const n = KT.n, vars = VARN.slice(0, n).join('');
+  const card = h('div', { class: 'card' });
+  card.append(h('h3', null, 'K-map tutor (SOP: group the 1s)'));
+  card.append(h('p', { class: 'muted' }, 'A is the most significant bit. Headings use Gray code 00, 01, 11, 10. ' + (1 << n) + ' cells; each cell shows its value and minterm number.'));
+  card.append(h('div', { class: 'row', role: 'group', 'aria-label': 'Number of variables' },
+    [2, 3, 4].map(k => h('button', { type: 'button', class: 'btn', 'data-fk': 'kn-' + k, 'aria-pressed': String(k === n), onclick: () => { ktSetN(k); keepFocus(render); } }, k + ' variables')),
+    h('select', { 'aria-label': 'Load a verified example', 'data-fk': 'kpre', onchange: e => { if (e.target.value !== '') { ktLoad(PRESETS[+e.target.value]); keepFocus(render); } } },
+      h('option', { value: '' }, 'Load a verified example…'), PRESETS.map((p, i) => h('option', { value: i }, pr(p.name))))));
+  card.append(h('div', { class: 'row', role: 'group', 'aria-label': 'Click mode' },
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'kmode-e', 'aria-pressed': String(KT.mode === 'edit'), onclick: () => { KT.mode = 'edit'; keepFocus(render); } }, '✏ Edit values (toggle 0/1)'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'kmode-g', 'aria-pressed': String(KT.mode === 'group'), onclick: () => { KT.mode = 'group'; keepFocus(render); } }, '▭ Select a group'),
+    h('button', { type: 'button', class: 'btn small', 'data-fk': 'kclear', onclick: () => { KT.ones = new Set(); KT.groups = []; KT.sel = new Set(); KT.msg = null; keepFocus(render); } }, 'Clear map')));
+  const grid = kmapGrid(n, {
+    id: 'kt', val: m => KT.ones.has(m) ? 1 : 0, sel: m => KT.sel.has(m),
+    cls: m => { const g = ktGroupOf(m); return g.length ? GCLS[g[0] % 6] : ''; },
+    badge: m => ktGroupOf(m).map(i => 'G' + (i + 1)).join(' '),
+    onCell: m => {
+      if (KT.mode === 'edit') { KT.ones.has(m) ? KT.ones.delete(m) : KT.ones.add(m); KT.groups = []; KT.sel = new Set(); KT.msg = { k: 'info', t: 'Map changed, so groups were cleared.' }; }
+      else { KT.sel.has(m) ? KT.sel.delete(m) : KT.sel.add(m); KT.msg = null; }
+      keepFocus(render);
+    }
+  });
+  card.append(grid);
+  card.append(h('p', { class: 'muted' }, KT.mode === 'edit' ? 'Edit mode: click cells to flip 0/1.' : 'Group mode: click cells to select them (orange outline), then press “Add selected cells as a group”. Selected: ' + (KT.sel.size ? [...KT.sel].sort((a, b) => a - b).map(m => 'm' + m).join(', ') : 'none') + '.'));
+  card.append(h('div', { class: 'row' },
+    h('button', { type: 'button', class: 'btn primary', 'data-fk': 'kadd', disabled: KT.mode !== 'group', onclick: () => ktAdd() }, 'Add selected cells as a group'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'kdesel', onclick: () => { KT.sel = new Set(); KT.msg = null; keepFocus(render); } }, 'Deselect'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'kauto', onclick: () => { const mc = minimalCover(KT.ones, n); KT.groups = mc.groups.map(c => analyzeGroup(c, n, KT.ones)); KT.sel = new Set(); KT.msg = { k: 'info', t: 'Loaded one smallest-SOP grouping found by exhaustive search. Other equally small groupings can also be correct.' }; keepFocus(render); } }, 'Show a minimal grouping')));
+  if (KT.msg) card.append(h('div', { class: 'msg ' + KT.msg.k, role: 'status' }, KT.msg.t));
+  /* groups list */
+  if (KT.groups.length) {
+    card.append(h('h4', null, 'Your groups'));
+    KT.groups.forEach((g, i) => card.append(h('div', { class: 'msg info' },
+      h('span', { class: 'gchip ' + GCLS[i % 6], style: 'border:1px solid var(--line)' }, 'G' + (i + 1)),
+      g.cells.map(m => 'm' + m).join(' + ') + ' (' + g.size + ' cell' + (g.size > 1 ? 's' : '') + '): ',
+      g.kept.map(pr).join('; ') + (g.kept.length ? '. ' : ''), g.removed.length ? 'Changing, so removed: ' + g.removed.join(', ') + '. ' : 'No variable stays fixed, so the term is 1. ',
+      h('strong', null, '→ ' + pr(g.term)), ' ',
+      h('button', { type: 'button', class: 'btn small', 'data-fk': 'krm-' + i, onclick: () => { KT.groups.splice(i, 1); KT.msg = null; keepFocus(render); } }, 'Remove'))));
+  }
+  card.append(ktResult());
+  card.append(h('div', { class: 'msg info' }, h('strong', null, 'Rules checked: '), 'rectangle (wraparound allowed), size 1/2/4/8/16, only 1s for SOP, every 1 covered, overlap allowed. Diagonal, L-shaped and three-cell selections are rejected with a reason.'));
+  return card;
+}
+function ktAdd() {
+  const n = KT.n, res = analyzeGroup([...KT.sel], n, KT.ones);
+  if (!res.ok) { KT.msg = { k: 'bad', t: '✘ Invalid group. ' + res.msg }; }
+  else {
+    const dup = KT.groups.some(g => g.cells.join() === res.cells.join());
+    if (dup) KT.msg = { k: 'bad', t: 'That exact group is already added.' };
+    else { KT.groups.push(res); KT.msg = { k: 'ok', t: '✔ Valid group of ' + res.size + ': term ' + pr(res.term) + '.' }; KT.sel = new Set(); }
+  }
+  keepFocus(render);
+}
+function ktResult() {
+  const n = KT.n, box = h('div', { class: 'card', style: 'margin:.8rem 0 0' });
+  box.append(h('h4', { style: 'margin-top:0' }, 'Result'));
+  if (!KT.ones.size) { box.append(h('p', null, 'The map is all 0s, so F = 0 (no groups needed).')); return box; }
+  if (!KT.groups.length) { box.append(h('p', { class: 'muted' }, 'No groups yet. Select cells and add a group, or press “Show a minimal grouping”.')); return box; }
+  const covered = new Set(); KT.groups.forEach(g => g.cells.forEach(m => covered.add(m)));
+  const unc = [...KT.ones].filter(m => !covered.has(m)).sort((a, b) => a - b);
+  const expr = sopFromGroups(KT.groups.map(g => g.cells), n);
+  box.append(h('p', null, 'F = ', h('span', { class: 'expr' }, pr(expr.split('+').join(' + ')))));
+  if (unc.length) box.append(h('div', { class: 'msg bad' }, '✘ Not finished: these 1s are not covered yet: ' + unc.map(m => 'm' + m).join(', ') + '.'));
+  const bad = checkSOP(expr, n, KT.ones);
+  const rows = []; for (let m = 0; m < (1 << n); m++) { const e = envFor(m, VARN.slice(0, n).join('')); rows.push(VARN.slice(0, n).map(v => e[v]).concat([KT.ones.has(m) ? 1 : 0, bad.includes(m) ? (KT.ones.has(m) ? 0 : 1) : (KT.ones.has(m) ? 1 : 0), bad.includes(m) ? '✘' : '✔'])); }
+  box.append(h('div', { class: 'msg ' + (bad.length ? 'bad' : 'ok'), role: 'status' }, bad.length ? '✘ The expression does not match the map on: ' + bad.map(m => 'm' + m).join(', ') + '.' : '✔ Verified: the expression matches the original function on all ' + (1 << n) + ' input combinations.'));
+  if (!bad.length) {
+    const mc = minimalCover(KT.ones, n), lits = literalCount(KT.groups.map(g => g.cells), n);
+    const dupGroups = KT.groups.length;
+    if (dupGroups === mc.terms && lits === mc.lits) box.append(h('div', { class: 'msg ok' }, '★ This is also minimal: ' + mc.terms + ' term' + (mc.terms > 1 ? 's' : '') + ', ' + mc.lits + ' literals (checked by exhaustive search). A different grouping with the same size is equally correct.'));
+    else box.append(h('div', { class: 'msg info' }, 'Valid but not minimal: yours uses ' + dupGroups + ' term(s) and ' + lits + ' literal(s); a smaller SOP uses ' + mc.terms + ' term(s) and ' + mc.lits + ' literal(s). Look for bigger groups or redundant groups to drop.'));
+  }
+  const det = h('details', null, h('summary', null, 'Show verification table (all inputs)'));
+  det.append(ttElement(VARN.slice(0, n).join(''), ['Original F', 'Your SOP', 'Match'], rows, -1));
+  box.append(det);
+  if (n >= 2) box.append(h('p', { class: 'muted' }, 'Tip: the verified lesson examples are available in the “Load a verified example” list.'));
+  return box;
+}
+
+function labFive() {
+  const card = h('div', { class: 'card' });
+  card.append(h('h3', null, 'Five-variable K-map (brief extension)'), h('p', null, 'Five variables need 32 cells, drawn as two 4×4 maps: A = 0 (m0–m15) and A = 1 (m16–m31). Rows are BC and columns are DE, both in Gray code. Cells in the same position in the two maps are adjacent. A group spanning both maps removes A.'));
+  const L = kLayout(4);
+  const mk = a => {
+    const head = h('tr', null, h('th', { class: 'corner' }, 'BC \\ DE'), L.cols.map(c => h('th', null, toBin(c, 2))));
+    const rows = L.rows.map((rv, r) => h('tr', null, h('th', null, toBin(rv, 2)), L.cols.map((cv, c) => {
+      const low = cellMinterm(L, r, c), m = low + 16 * a, hl = F5.m != null && (F5.m % 16 === low);
+      return h('td', null, h('button', { type: 'button', class: 'kcell' + (hl ? ' hl' : ''), 'data-fk': 'f5-' + m, 'aria-label': 'm' + m + ', ' + mintermDesc(m, 5) + (hl ? ', highlighted pair' : ''), 'aria-pressed': String(hl), onclick: () => { F5.m = (F5.m != null && F5.m % 16 === low) ? null : m; keepFocus(render); } }, h('span', { class: 'km', style: 'font-size:.95rem;color:inherit;font-weight:700' }, 'm' + m)));
+    })));
+    return h('div', null, h('h4', null, 'A = ' + a + ' map'), h('div', { class: 'tablewrap' }, h('table', { class: 'kmap', 'aria-label': 'Map for A = ' + a }, h('thead', null, head), h('tbody', null, rows))));
+  };
+  card.append(h('div', { class: 'grid2' }, mk(0), mk(1)));
+  if (F5.m == null) card.append(h('div', { class: 'msg info' }, 'Click any cell to highlight its partner in the other map.'));
+  else {
+    const low = F5.m % 16, pair = [low, low + 16];
+    const t = analyzeGroup(pair, 5, new Set(pair));
+    card.append(h('div', { class: 'msg ok', role: 'status' }, 'm' + low + ' (A=0) and m' + (low + 16) + ' (A=1) are adjacent: only A differs. Grouping the pair removes A and gives the term ' + pr(t.term) + '. (Detailed five-variable minimization is optional.)'));
+  }
+  return card;
+}
+
+/* ---------- PRACTICE ---------- */
+const PR = { topic: 'all', diff: 'all', shuffle: false, list: [], i: 0, started: false, state: {} };
+function prStart() {
+  let l = Q.filter(q => (PR.topic === 'all' || q.topic === PR.topic) && (PR.diff === 'all' || q.diff === +PR.diff));
+  l = PR.shuffle ? shuffle(l) : l.slice().sort((a, b) => a.diff - b.diff);
+  PR.list = l.map(prep); PR.i = 0; PR.state = {}; PR.started = true;
+}
+function viewPractice() {
+  const wrap = h('div');
+  const setup = h('div', { class: 'card' }, h('h2', null, 'Practice (untimed)'), h('p', { class: 'muted' }, 'Answer, get immediate feedback, and read the worked explanation. Hints are optional.'));
+  const topicSel = h('select', { 'aria-label': 'Topic filter', onchange: e => { PR.topic = e.target.value; } }, h('option', { value: 'all' }, 'All topics'), Object.keys(TOPICS).map(k => h('option', { value: k, selected: PR.topic === k }, TOPICS[k])));
+  const diffSel = h('select', { 'aria-label': 'Difficulty filter', onchange: e => { PR.diff = e.target.value; } }, h('option', { value: 'all' }, 'All difficulties'), [1, 2, 3].map(k => h('option', { value: k, selected: String(PR.diff) === String(k) }, DIFF[k])));
+  setup.append(h('div', { class: 'row' }, topicSel, diffSel, h('label', null, h('input', { type: 'checkbox', checked: PR.shuffle, onchange: e => { PR.shuffle = e.target.checked; } }), ' Shuffle'), h('button', { type: 'button', class: 'btn primary', 'data-fk': 'pstart', onclick: () => { prStart(); keepFocus(render); } }, PR.started ? 'Restart with these filters' : 'Start practice')));
+  wrap.append(setup);
+  if (PR.started) {
+    if (!PR.list.length) { wrap.append(h('div', { class: 'msg bad' }, 'No questions match those filters.')); return wrap; }
+    const inst = PR.list[PR.i], st = PR.state[inst.q.id] || (PR.state[inst.q.id] = { a: null, fb: false, hint: false });
+    wrap.append(h('p', null, h('strong', null, 'Question ' + (PR.i + 1) + ' of ' + PR.list.length), ' · answered ' + Object.values(PR.state).filter(s => s.fb).length));
+    const finish = () => { st.fb = true; record(inst.q, isCorrect(inst.q, st.a)); announce(isCorrect(inst.q, st.a) ? 'Correct' : 'Not quite'); keepFocus(render); };
+    wrap.append(questionCard(inst, {
+      answer: st.a, feedback: st.fb, lockOnFeedback: true, hintShown: st.hint, hint: () => { st.hint = true; keepFocus(render); }, lessonLink: openLesson,
+      check: finish, onAnswer: v => { st.a = v; if (inst.q.type === 'mc') finish(); else keepFocus(render); }
+    }));
+    wrap.append(h('div', { class: 'row' },
+      h('button', { type: 'button', class: 'btn', 'data-fk': 'pprev', disabled: PR.i === 0, onclick: () => { PR.i--; render(); } }, '← Previous'),
+      h('button', { type: 'button', class: 'btn primary', 'data-fk': 'pnext', disabled: PR.i >= PR.list.length - 1, onclick: () => { PR.i++; render(); } }, 'Next →'),
+      st.fb && inst.q.type !== 'mc' ? null : null,
+      st.fb ? h('button', { type: 'button', class: 'btn', 'data-fk': 'ptry', onclick: () => { PR.state[inst.q.id] = { a: null, fb: false, hint: false }; PR.list[PR.i] = prep(inst.q); render(); } }, 'Try this question again') : null));
+  }
+  return wrap;
+}
+
+/* ---------- MOCK EXAM ---------- */
+const EX = { count: 10, topics: { gates: true, bool: true, kmap: true }, timer: false, minutes: 15, phase: 'setup', items: [], ans: {}, i: 0, left: 0, tick: null, res: null, confirm: false };
+function exPick() {
+  const ts = Object.keys(EX.topics).filter(k => EX.topics[k]);
+  const pools = ts.map(t => shuffle(Q.filter(q => q.topic === t)));
+  const per = Math.floor(EX.count / ts.length); let rem = EX.count - per * ts.length;
+  const picked = [];
+  pools.forEach(p => { let k = per + (rem > 0 ? 1 : 0); if (rem > 0) rem--; picked.push(...p.splice(0, k)); });
+  const left = shuffle(pools.flat()); while (picked.length < EX.count && left.length) picked.push(left.pop());
+  return shuffle(picked).map(prep);
+}
+function exStart() {
+  const ts = Object.keys(EX.topics).filter(k => EX.topics[k]); if (!ts.length) return;
+  EX.items = exPick(); EX.ans = {}; EX.i = 0; EX.phase = 'run'; EX.res = null; EX.confirm = false;
+  clearInterval(EX.tick); EX.tick = null;
+  if (EX.timer) { EX.left = Math.max(1, +EX.minutes || 1) * 60; EX.tick = setInterval(exTick, 1000); }
+  render();
+}
+function exTick() {
+  EX.left--;
+  const el = $('#timer'); if (el) el.textContent = fmt(EX.left);
+  if (EX.left === 60) announce('One minute remaining'); if (EX.left === 300) announce('Five minutes remaining');
+  if (EX.left <= 0) exSubmit(true);
+}
+const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+function exSubmit(auto) {
+  clearInterval(EX.tick); EX.tick = null;
+  const by = {}; Object.keys(TOPICS).forEach(k => by[k] = { n: 0, c: 0, u: 0 });
+  const wrong = [];
+  EX.items.forEach(it => {
+    const q = it.q, a = EX.ans[q.id], t = by[q.topic]; t.n++;
+    const ans = isAnswered(q, a), ok = isCorrect(q, a);
+    if (!ans) t.u++; if (ok) t.c++; else wrong.push(it);
+    record(q, ok);
+  });
+  const total = EX.items.length, score = EX.items.filter(it => isCorrect(it.q, EX.ans[it.q.id])).length;
+  const unans = EX.items.filter(it => !isAnswered(it.q, EX.ans[it.q.id])).length;
+  EX.res = { score, total, unans, by, wrong, auto: !!auto };
+  P.history.push({ d: Date.now(), s: score, t: total }); P.history = P.history.slice(-30); saveP();
+  EX.phase = 'result'; render();
+}
+function viewExam() {
+  if (EX.phase === 'setup') return examSetup();
+  if (EX.phase === 'run') return examRun();
+  return examResult();
+}
+function examSetup() {
+  const c = h('div', { class: 'card' }, h('h2', null, 'Mock Exam'), h('p', { class: 'muted' }, 'Answers and explanations stay hidden until you submit. Questions are balanced across the selected topics and shuffled.'));
+  c.append(h('fieldset', { class: 'row', style: 'border:0;padding:0;margin:.5rem 0' }, h('legend', null, 'Number of questions'), [10, 20, 30].map(n => h('button', { type: 'button', class: 'btn', 'data-fk': 'ec-' + n, 'aria-pressed': String(EX.count === n), onclick: () => { EX.count = n; keepFocus(render); } }, n + ' questions'))));
+  c.append(h('fieldset', { class: 'row', style: 'border:0;padding:0;margin:.5rem 0' }, h('legend', null, 'Topics'), Object.keys(TOPICS).map(k => h('label', null, h('input', { type: 'checkbox', checked: EX.topics[k], onchange: e => { EX.topics[k] = e.target.checked; keepFocus(render); } }), ' ' + TOPICS[k]))));
+  c.append(h('div', { class: 'row' }, h('label', null, h('input', { type: 'checkbox', checked: EX.timer, onchange: e => { EX.timer = e.target.checked; keepFocus(render); } }), ' Timer'),
+    EX.timer ? h('label', null, 'Minutes: ', h('input', { type: 'number', min: 1, max: 180, value: EX.minutes, 'aria-label': 'Timer minutes', style: 'width:5rem', onchange: e => { EX.minutes = Math.max(1, Math.min(180, +e.target.value || 1)); } })) : null));
+  const none = !Object.values(EX.topics).some(Boolean);
+  if (none) c.append(h('div', { class: 'msg bad' }, 'Choose at least one topic.'));
+  c.append(h('button', { type: 'button', class: 'btn primary', 'data-fk': 'estart', disabled: none, onclick: exStart }, 'Start exam'));
+  return c;
+}
+function examRun() {
+  const wrap = h('div'), it = EX.items[EX.i], q = it.q;
+  const answered = EX.items.filter(x => isAnswered(x.q, EX.ans[x.q.id])).length;
+  wrap.append(h('div', { class: 'card' },
+    h('div', { class: 'row' }, h('span', { class: 'stat' }, h('strong', null, 'Question ' + (EX.i + 1) + ' / ' + EX.items.length)), h('span', { class: 'stat' }, 'Answered: ' + answered + ' · Unanswered: ' + (EX.items.length - answered)),
+      EX.timer ? h('span', { class: 'stat' }, '⏱ ', h('strong', { id: 'timer' }, fmt(EX.left))) : null),
+    h('div', { class: 'qnav', role: 'group', 'aria-label': 'Question navigator' }, EX.items.map((x, i) => h('button', { type: 'button', class: 'btn small', 'data-fk': 'qn-' + i, 'aria-current': i === EX.i ? 'page' : null, 'aria-label': 'Question ' + (i + 1) + (isAnswered(x.q, EX.ans[x.q.id]) ? ', answered' : ', unanswered'), onclick: () => { EX.i = i; EX.confirm = false; render(); } }, (i + 1) + (isAnswered(x.q, EX.ans[x.q.id]) ? '✓' : '·')))))); 
+  wrap.append(questionCard(it, { answer: EX.ans[q.id] == null ? null : EX.ans[q.id], feedback: false, onAnswer: v => { EX.ans[q.id] = v; keepFocus(render); } }));
+  wrap.append(h('div', { class: 'row' },
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'eprev', disabled: EX.i === 0, onclick: () => { EX.i--; render(); } }, '← Previous'),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'enext', disabled: EX.i >= EX.items.length - 1, onclick: () => { EX.i++; render(); } }, 'Next →'),
+    h('button', { type: 'button', class: 'btn primary', 'data-fk': 'esub', onclick: () => { const un = EX.items.length - answered; if (un > 0) { EX.confirm = true; render(); } else exSubmit(false); } }, 'Submit exam')));
+  if (EX.confirm) {
+    const un = EX.items.length - answered;
+    wrap.append(h('div', { class: 'msg bad', role: 'alert' }, h('p', null, 'You still have ' + un + ' unanswered question' + (un > 1 ? 's' : '') + '. Unanswered items count as incorrect. Submit anyway?'),
+      h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: () => exSubmit(false) }, 'Yes, submit'), h('button', { type: 'button', class: 'btn', onclick: () => { EX.confirm = false; render(); } }, 'Keep working'))));
+  }
+  return wrap;
+}
+function examResult() {
+  const r = EX.res, pct = Math.round(100 * r.score / r.total);
+  const wrap = h('div');
+  const sum = h('div', { class: 'card' }, h('h2', null, 'Exam results'), r.auto ? h('div', { class: 'msg info' }, 'The timer ended, so the exam was submitted automatically.') : null,
+    h('div', null, h('span', { class: 'big' }, r.score + ' / ' + r.total), h('span', { class: 'big muted' }, '  (' + pct + '%)')),
+    h('p', null, 'Unanswered (counted as incorrect): ' + r.unans + ' · Incorrect answers: ' + (r.wrong.length - r.unans)),
+    h('p', { class: 'muted' }, 'This score reflects only these practice questions; it is not a prediction of your real exam grade.'));
+  sum.append(h('div', { class: 'tablewrap' }, h('table', { class: 'data' }, h('thead', null, h('tr', null, ['Topic', 'Correct', 'Total', 'Percent'].map(x => h('th', { scope: 'col' }, x)))),
+    h('tbody', null, Object.keys(r.by).filter(k => r.by[k].n).map(k => h('tr', null, h('td', null, TOPICS[k]), h('td', null, r.by[k].c), h('td', null, r.by[k].n), h('td', null, Math.round(100 * r.by[k].c / r.by[k].n) + '%')))))));
+  const lessons = [...new Set(r.wrong.map(it => it.q.lesson))];
+  if (lessons.length) sum.append(h('p', null, h('strong', null, 'Suggested lessons to revisit: '), lessons.map(l => h('button', { type: 'button', class: 'btn small', style: 'margin:.15rem', onclick: () => openLesson(l) }, (LEARN.find(x => x.id === l) || {}).title))));
+  sum.append(h('div', { class: 'row' }, r.wrong.length ? h('button', { type: 'button', class: 'btn primary', onclick: () => { RV.ids = r.wrong.map(it => it.q.id); RV.idx = 0; RV.st = {}; go('review'); } }, 'Retry missed questions') : null, h('button', { type: 'button', class: 'btn', onclick: () => { EX.phase = 'setup'; render(); } }, 'New exam')));
+  wrap.append(sum);
+  if (r.wrong.length) wrap.append(h('h3', null, 'Review: incorrect and unanswered'));
+  r.wrong.forEach((it, i) => wrap.append(h('div', null, h('p', { class: 'muted' }, 'Item ' + (i + 1) + ' · your answer: ' + userAnswerText(it.q, EX.ans[it.q.id])), questionCard(it, { answer: EX.ans[it.q.id] == null ? null : EX.ans[it.q.id], feedback: true, locked: true, lessonLink: openLesson }))));
+  if (!r.wrong.length) wrap.append(h('div', { class: 'msg ok' }, '🎉 Every question was answered correctly.'));
+  return wrap;
+}
+
+/* ---------- MISTAKE REVIEW ---------- */
+const RV = { ids: null, idx: 0, st: {}, inst: {}, confirm: false };
+function viewReview() {
+  const wrap = h('div');
+  if (!RV.ids) RV.ids = P.missed.slice();
+  RV.ids = RV.ids.filter(id => qById(id));
+  const head = h('div', { class: 'card' }, h('h2', null, 'Mistake Review'), h('p', { class: 'muted' }, 'Questions you missed in Practice or Mock Exams. Answer correctly to clear a question from this list.'));
+  head.append(h('div', { class: 'row' }, h('span', { class: 'stat' }, 'Saved missed questions: ' + P.missed.length),
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'rvload', onclick: () => { RV.ids = P.missed.slice(); RV.idx = 0; RV.st = {}; RV.inst = {}; render(); } }, 'Reload list')));
+  wrap.append(head);
+  if (!RV.ids.length) { wrap.append(h('div', { class: 'msg ok' }, '✔ Nothing to review right now. Missed questions will appear here.')); wrap.append(progressCard()); return wrap; }
+  if (RV.idx >= RV.ids.length) RV.idx = RV.ids.length - 1;
+  const q = qById(RV.ids[RV.idx]); const inst = RV.inst[q.id] || (RV.inst[q.id] = prep(q));
+  const st = RV.st[q.id] || (RV.st[q.id] = { a: null, fb: false, hint: false });
+  wrap.append(h('p', null, h('strong', null, 'Retry ' + (RV.idx + 1) + ' of ' + RV.ids.length)));
+  const finish = () => { st.fb = true; const ok = isCorrect(q, st.a); record(q, ok); if (ok) { clearMissed(q.id); announce('Correct. Removed from your missed list.'); } else announce('Not quite'); keepFocus(render); };
+  wrap.append(questionCard(inst, { answer: st.a, feedback: st.fb, lockOnFeedback: true, hintShown: st.hint, hint: () => { st.hint = true; keepFocus(render); }, lessonLink: openLesson, check: finish, onAnswer: v => { st.a = v; if (q.type === 'mc') finish(); else keepFocus(render); } }));
+  if (st.fb) wrap.append(h('div', { class: 'msg ' + (isCorrect(q, st.a) ? 'ok' : 'info') }, isCorrect(q, st.a) ? '✔ Cleared from your missed list.' : 'Still on your missed list. Try again after reading the explanation.'));
+  wrap.append(h('div', { class: 'row' },
+    h('button', { type: 'button', class: 'btn', 'data-fk': 'rprev', disabled: RV.idx === 0, onclick: () => { RV.idx--; render(); } }, '← Previous'),
+    h('button', { type: 'button', class: 'btn primary', 'data-fk': 'rnext', disabled: RV.idx >= RV.ids.length - 1, onclick: () => { RV.idx++; render(); } }, 'Next →'),
+    st.fb && !isCorrect(q, st.a) ? h('button', { type: 'button', class: 'btn', 'data-fk': 'rtry', onclick: () => { RV.st[q.id] = { a: null, fb: false, hint: false }; RV.inst[q.id] = prep(q); render(); } }, 'Try again') : null));
+  wrap.append(progressCard());
+  return wrap;
+}
+function progressCard() {
+  const c = h('div', { class: 'card' }, h('h3', null, 'Your saved progress'));
+  const rows = Object.keys(TOPICS).map(k => { const ids = Q.filter(q => q.topic === k); let a = 0, cr = 0, seen = 0; ids.forEach(q => { const s = P.stats[q.id]; if (s) { seen++; a += s.a; cr += s.c; } }); return [TOPICS[k], seen + ' / ' + ids.length, a ? Math.round(100 * cr / a) + '%' : '–']; });
+  c.append(tblEl(['Topic', 'Questions seen', 'Answer accuracy so far'], rows));
+  c.append(h('p', { class: 'muted' }, 'Accuracy here only describes your attempts at these practice questions. It is not a prediction of your exam grade.'));
+  if (!storageOK) c.append(h('div', { class: 'msg info' }, 'Saving is unavailable in this browser, so progress lasts only until you close this page. Everything else works normally.'));
+  if (RS.confirm) c.append(h('div', { class: 'msg bad', role: 'alert' }, 'Reset all saved progress, missed questions and exam history?', h('div', { class: 'row' }, h('button', { type: 'button', class: 'btn primary', onclick: () => { const th = P.theme; P = blankP(); P.theme = th; saveP(); RV.ids = null; RV.st = {}; RV.inst = {}; RS.confirm = false; render(); } }, 'Yes, reset'), h('button', { type: 'button', class: 'btn', onclick: () => { RS.confirm = false; render(); } }, 'Cancel'))));
+  else c.append(h('button', { type: 'button', class: 'btn small', 'data-fk': 'reset', onclick: () => { RS.confirm = true; render(); } }, 'Reset progress'));
+  return c;
+}
+const RS = { confirm: false };
+function tblEl(head, rows) { return h('div', { class: 'tablewrap' }, h('table', { class: 'data' }, h('thead', null, h('tr', null, head.map(x => h('th', { scope: 'col' }, x)))), h('tbody', null, rows.map(r => h('tr', null, r.map(c => h('td', null, c))))))); }
+
+/* ---------- SHELL ---------- */
+function applyTheme(t) { App.theme = t; document.documentElement.setAttribute('data-theme', t); }
+function render() {
+  const main = $('#main'); main.innerHTML = '';
+  document.querySelectorAll('nav.tabs .btn[data-view]').forEach(b => { if (b.dataset.view === App.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  main.append(({ learn: viewLearn, lab: viewLab, practice: viewPractice, exam: viewExam, review: viewReview })[App.view]());
+}
+function selfCheck() {
+  let n = 0, bad = 0; const t = (c) => { n++; if (!c) bad++; };
+  for (const g in GATE_FN) { const e = { AND: 'AB', OR: 'A+B', NAND: "(AB)'", NOR: "(A+B)'", XOR: 'A^B', XNOR: "(A^B)'", NOT: "A'" }[g], two = g !== 'NOT', tt = truthOf(e, two ? 'AB' : 'A'); for (let m = 0; m < tt.length; m++) t(tt[m] === (two ? GATE_FN[g](m >> 1, m & 1) : GATE_FN[g](m))); }
+  LAWS.forEach(l => t(equivalent(l.l, l.r)));
+  Q.forEach(q => { const m = q.meta; if (q.type === 'mc' && m && m.type === 'simp') q.choices.forEach((c, i) => { const p = plain(c); t((m.n ? checkSOP(p, m.n, new Set(m.mins)).length === 0 : equivalent(p, m.ref)) === (i === q.correct)); }); });
+  PRESETS.forEach(p => t(checkSOP(p.ans, p.n, new Set(p.mins)).length === 0));
+  return { n, bad };
+}
+function init() {
+  announceEl = $('#live');
+  const sys = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  applyTheme(P.theme || sys);
+  const tabs = [['learn', 'Learn'], ['lab', 'Visual Lab'], ['practice', 'Practice'], ['exam', 'Mock Exam'], ['review', 'Mistake Review']];
+  const nav = $('#tabs'); tabs.forEach(t => nav.append(h('button', { type: 'button', class: 'btn', 'data-view': t[0], onclick: () => { if (t[0] === 'review') { RV.ids = null; RV.inst = {}; RV.st = {}; RV.idx = 0; } go(t[0]); } }, t[1])));
+  $('#theme').addEventListener('click', () => { const t = App.theme === 'dark' ? 'light' : 'dark'; applyTheme(t); P.theme = t; saveP(); $('#theme').setAttribute('aria-pressed', String(t === 'dark')); });
+  $('#theme').setAttribute('aria-pressed', String(App.theme === 'dark'));
+  const sc = selfCheck();
+  $('#selfcheck').textContent = 'Self-check: ' + (sc.n - sc.bad) + ' of ' + sc.n + ' built-in logic checks passed · ' + Q.length + ' questions' + (storageOK ? '' : ' · saving unavailable (progress not stored)');
+  render();
+}
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
